@@ -1,0 +1,12 @@
+.cart-empty {
+    position: relative;
+    margin-top: 25%;
+    margin-bottom: 25%;
+}
+.cart-empty img {
+    position: relative;
+    left: 45%;
+}
+.cart-empty h2 {
+    text-align: center;
+}
