@@ -29,7 +29,7 @@ const DELETE_SERVICE_URL = '/service/delete/'
 const Service = () => {
 
     const [services, setServices] = useState([])
-    const idAdmin = JSON.parse(localStorage.getItem('user')).user.payload.user._id
+    const idAdmin = localStorage.getItem('user')?JSON.parse(localStorage.getItem('user')).user.payload.user._id:null
     const get_Service = (id) => {
         axiosApi.getBYID(GET_ALL_SERVISES_BY_ADMIN_URL,id)
         .then((res) => setServices(res))
@@ -92,7 +92,9 @@ const Service = () => {
     }
 
     useEffect(() => {
+      if(localStorage.getItem('user')){
         get_Service(idAdmin)
+      }
     },[])
   return (
     <>
@@ -112,14 +114,14 @@ const Service = () => {
                       <CTableHeaderCell scope="col">Image</CTableHeaderCell>
                       <CTableHeaderCell scope="col">Name</CTableHeaderCell>
                       <CTableHeaderCell scope="col">ACTIVATE / DESACTIVATE</CTableHeaderCell>
-                      <CTableHeaderCell scope="col">UPDATE</CTableHeaderCell>
-                      <CTableHeaderCell scope="col">DELETE</CTableHeaderCell>
+                      <CTableHeaderCell scope="col">Update</CTableHeaderCell>
+                      <CTableHeaderCell scope="col">Delete</CTableHeaderCell>
                     </CTableRow>
                   </CTableHead>
                   <CTableBody>
                     {services.length > 0 ?services.map((service) => 
                     <CTableRow key={service._id} className={ service.isActive === true ? "table-success" : "table-danger"}>
-                      <CTableDataCell><img style={{width:70+'px'}} src={service.image} alt={service.name} /></CTableDataCell>
+                      <CTableDataCell><img style={{height:'50px'}} src={service.image} alt={service.name} /></CTableDataCell>
                       <CTableDataCell>{service.name}</CTableDataCell>
                       <CTableDataCell><ReactSwitch
                             checked={service.isActive === true}
@@ -127,8 +129,8 @@ const Service = () => {
                                 updateServiceStatus(service._id)
                             }}
                         /></CTableDataCell>
-                      <CTableDataCell><Link to={`/service/addService/${service._id}`}><CButton color="warning">UPDATE</CButton></Link></CTableDataCell>
-                      <CTableDataCell><CButton color="danger" onClick={() => handleDelete(service._id)}>DELETE</CButton></CTableDataCell>
+                      <CTableDataCell><Link to={`/service/addService/${service._id}`}><CButton color="warning">Update</CButton></Link></CTableDataCell>
+                      <CTableDataCell><CButton color="danger" onClick={() => handleDelete(service._id)}>Delete</CButton></CTableDataCell>
                     </CTableRow>
                     ): <CTableRow><CTableDataCell>Not Data Found</CTableDataCell></CTableRow>}
                   </CTableBody>

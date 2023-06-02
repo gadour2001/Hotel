@@ -3,6 +3,13 @@ import CIcon from '@coreui/icons-react'
 import cart from 'src/assets/images/cart.png'
 import 'src/assets/css/cart.css'
 import {
+  CModal,
+  CModalBody,
+  CModalFooter,
+  CModalHeader,
+  CModalTitle,
+} from '@coreui/react'
+import {
   CButton,
   CCard,
   CCardBody,
@@ -46,30 +53,41 @@ const UPDATE_CUSTOM_SOLD_URL = '/client/updateSold/'
 const UPDATE_PRODUCT_QUANTITY_URL = '/materialproduct/editQuantity/' 
 const GET_CUSTOM_URL = '/user/get/'
 
+
 const Cart = () => {
   const navigate = useNavigate()
-  const idClient = JSON.parse(localStorage.getItem("user")).user.payload.user._id
+  const idClient = localStorage.getItem("user")?JSON.parse(localStorage.getItem("user")).user.payload.user._id:null
+  const Client = localStorage.getItem("user")?JSON.parse(localStorage.getItem("user")).user.payload.user:null
 
   const [products, setProducts] = useState([])
   const [prixTotal, setPrixtotal] = useState(0)
-  const [idService, setIdService] = useState("");
+  const [idService, setIdService] = useState("")
+
+  const [visible, setVisible] = useState(false)
 
   useEffect(() => {
-    let total = 0;
-    const updatedProducts = [];
+    if(Client){
+      if(Client.isActive == false)
+      {
+        navigate('/wait')
+      }else{
+        let total = 0;
+        const updatedProducts = [];
 
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i)
-      if (key.startsWith('product_')) {
-        const product = JSON.parse(localStorage.getItem(key))
-        updatedProducts.push(product);
-        setIdService(product.idService);
-        const prix = product.prix * product.quantity;
-        total += prix;
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i)
+          if (key.startsWith('product_')) {
+            const product = JSON.parse(localStorage.getItem(key))
+            updatedProducts.push(product);
+            setIdService(product.idService);
+            const prix = product.prix * product.quantity;
+            total += prix;
+          }
+        }
+        setProducts(updatedProducts);
+        setPrixtotal(total);
       }
-    }
-    setProducts(updatedProducts);
-    setPrixtotal(total);
+  }
   }, []);
 
   const handleClearAll = () => {
@@ -103,8 +121,8 @@ const Cart = () => {
             socket.emit("add_Order");
             const idCommand = res.commande._id;
             axiosApi.put(UPDATE_CUSTOM_SOLD_URL, idClient, { sold: -prixTotal })
-              .then((res) => {                
-                products.map( (product) => {
+              .then((res) => {
+                products.map((product) => {
                    axiosApi.getBYID(GET_PRODUCT_URL, product._id).then((res) => {
                     if(res.quantity != -1) {
                       axiosApi.put(UPDATE_PRODUCT_QUANTITY_URL, product._id, { quantity: -(product.quantity) })
@@ -118,7 +136,7 @@ const Cart = () => {
                       console.log('ligne added ' + product.name)
                     }).catch((err) => console.log(err))
                 })
-                // handleClearAll();
+                handleClearAll();
                 Swal.fire({
                   position: 'center',
                   icon: 'success',
@@ -137,6 +155,7 @@ const Cart = () => {
           timer: 1500
         })
       }
+      setVisible(false)
     })
   }
 
@@ -156,18 +175,19 @@ const Cart = () => {
     setProducts(newProducts)
   }
 
-  const UpdateQuantity = (e, product) => {
-    const newQuantity = parseInt(e.target.value);
+  const UpdateQuantity = (product , value) => {
     const newProducts = products.map((p) => {
       if (p._id === product._id) {
         const cartItem = JSON.parse(localStorage.getItem(`product_${product._id}`))
-        localStorage.setItem(`product_${product._id}`,
+        if(!(cartItem.quantity === 1 && value === -1)){
+          localStorage.setItem(`product_${product._id}`,
           JSON.stringify({
             ...cartItem,
-            quantity: newQuantity,
+            quantity: cartItem.quantity + value,
           })
-        )
-        return { ...p, quantity: newQuantity }
+          )
+          return { ...p, quantity: cartItem.quantity + value }
+        }
       }
       return p;
     });
@@ -177,80 +197,105 @@ const Cart = () => {
     );
     setPrixtotal(newPrixtotal);
   }
+
+
   return (
     <>
-      <CRow >
-        <CCol xs>
-          <CCard className="mb-12">
+    <CRow>
+      <CCol>
+        {products.length > 0 ? (
+          <CCard >
             <CCardHeader>
-              <strong>Cart</strong> <small>Example</small>
+               <strong>MY Cart</strong>
             </CCardHeader>
-            <CCardBody xs="true">
-            {products.length > 0 ? (
-              <CRow>
-                <CCol>
-                    <CCard >
-                        <CCardHeader>
-                            <strong>My Cart</strong> <small>Example</small>
-                        </CCardHeader>
-                        <CCardBody>
-                        <CTable striped>
-                            <CTableHead>
-                              <CTableRow>
-                                <CTableHeaderCell scope="col">Product</CTableHeaderCell>
-                                <CTableHeaderCell scope="col">Price</CTableHeaderCell>
-                                <CTableHeaderCell scope="col">Quantity</CTableHeaderCell>
-                                <CTableHeaderCell scope="col">Total</CTableHeaderCell>
-                                <CTableHeaderCell scope="col"></CTableHeaderCell>
-                              </CTableRow>
-                            </CTableHead>
-                            <CTableBody>
-                              {products.map((product) => (
-                              <CTableRow key={product._id}>
-                                <CTableDataCell>{product.name}</CTableDataCell>
-                                <CTableDataCell>{product.prix} DT</CTableDataCell>
-                                <CTableDataCell>
-                                  {product.quantity === -1 ? 
-                                    (<CFormInput 
-                                      type="number" 
-                                      defaultValue={product.quantity} 
-                                      min={1}
-                                      onChange={(e) => UpdateQuantity(e, product)}
-                                      required 
-                                    />) : 
-                                    (<CFormInput 
-                                      type="number" 
-                                      defaultValue={product.quantity} 
-                                      min={1}
-                                      max={product.quantity}
-                                      onChange={(e) => UpdateQuantity(e, product)}
-                                      required 
-                                    />)
-                                  }
-                                </CTableDataCell>
-                                <CTableDataCell>{parseFloat(product.prix) * parseInt(product.quantity)} DT</CTableDataCell>
-                                <CTableDataCell><CButton color="danger" onClick={() => handleDelete(product)}><CIcon icon={cilX} className="me-2"/></CButton></CTableDataCell>
-                              </CTableRow>
-                              ))}
-                              <CTableRow>
-                                <CTableDataCell  colSpan="3"><CButton color='warning' onClick={() => navigate('/serviceCustomer')}>Back to Shop</CButton></CTableDataCell>
-                                <CTableDataCell>{prixTotal} DT</CTableDataCell>
-                                <CTableDataCell><CButton color='info' onClick={() => handleCommande()}>Commander</CButton></CTableDataCell>
-                              </CTableRow>
-                            </CTableBody>
-                          </CTable>
-                        </CCardBody>
-                    </CCard>
-                  </CCol>
-              </CRow>
-              ) : <div className='cart-empty'>
-                    <img src={cart} alt='cart' />
-                    <h2>Your cart is currently empty.</h2>
-                  </div>}
-            </CCardBody>
-          </CCard>
-        </CCol>
-      </CRow>
+            <CCardBody>
+              <CTable striped>
+                <CTableHead>
+                  <CTableRow>
+                    <CTableHeaderCell scope="col">Product</CTableHeaderCell>
+                    <CTableHeaderCell scope="col">Price</CTableHeaderCell>
+                    <CTableHeaderCell scope="col">Quantity</CTableHeaderCell>
+                    <CTableHeaderCell scope="col">Total</CTableHeaderCell>
+                    <CTableHeaderCell scope="col"></CTableHeaderCell>
+                  </CTableRow>
+                  </CTableHead>
+                  <CTableBody>
+                    {products.map((product) => (
+                      <CTableRow key={product._id}>
+                        <CTableDataCell>{product.name}</CTableDataCell>
+                        <CTableDataCell>{product.prix} DT</CTableDataCell>
+                        <CTableDataCell>
+                          <div className="btn-group mr-2" role="group" aria-label="First group">
+                            <button type="button" className="btn btn-success" onClick={() => UpdateQuantity(product , 1)}>+</button>
+                            <input
+                              style={{ width: "60px" , textAlign:"center"}}
+                              type="text"
+                              value={product.quantity}
+                              readOnly 
+                            />
+                            <button type="button" className="btn btn-danger" onClick={() => UpdateQuantity(product , -1)}>-</button>
+                          </div>
+                        </CTableDataCell>
+                        <CTableDataCell>{parseFloat(product.prix) * parseInt(product.quantity)} DT</CTableDataCell>
+                        <CTableDataCell><CButton color="secondary" onClick={() => handleDelete(product)}><CIcon icon={cilX} className="me-2"/></CButton></CTableDataCell>
+                      </CTableRow>
+                    ))}
+                    <CTableRow>
+                      <CTableDataCell  colSpan="3"><CButton color='warning' onClick={() => navigate('/serviceCustomer')}>Back to Shop</CButton></CTableDataCell>
+                      <CTableHeaderCell>Total : {prixTotal} DT</CTableHeaderCell>
+                      <CTableDataCell><CButton color='info' onClick={() => setVisible(!visible)} >Commander</CButton></CTableDataCell>
+                    </CTableRow>
+                  </CTableBody>
+              </CTable>
+                </CCardBody>
+              </CCard>
+            ) : <div className='cart-empty'>
+                  <img src={cart} alt='cart' />
+                  <h2>Your cart is currently empty.</h2>
+                </div>}
+          </CCol>
+        </CRow>
+        <CModal size="xl" scrollable visible={visible} onClose={() => setVisible(false)}>
+          <CModalHeader>
+            <CModalTitle>MY Order</CModalTitle>
+          </CModalHeader>
+          <CModalBody >
+            <table style={{width:'100%',fontSize:'25px'}}>
+              <thead>
+              <tr className='m-2 '>
+                <th>Product</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Subtotal</th>
+                </tr>
+              </thead>
+              <tbody >
+              {products.map((product) => (
+                <tr className='m-2' key={product._id}>
+                  <td>{product.name}</td>
+                  <td>{product.prix} DT</td>
+                  <td>{product.quantity}</td>
+                  <td>{product.prix * product.quantity} DT</td>
+                </tr>
+              ))}
+              </tbody>
+              <tfoot>
+              <tr className='m-2 '>
+                <th></th>
+                <th></th>
+                <th>Total : </th>
+                <th>{prixTotal} DT</th>
+                </tr>
+              </tfoot>
+          </table>
+          </CModalBody>
+          <CModalFooter>
+            <CButton color="secondary" onClick={() => setVisible(false)}>
+              Close
+            </CButton>
+            <CButton color="primary" onClick={() => handleCommande()}>Confirm</CButton>
+          </CModalFooter>
+        </CModal>
     </>
   )
 }

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import {
   CButton,
   CCard,
@@ -31,7 +31,8 @@ const GET_RESPONSABLE_URL = '/user/get/'
 
 const ServiceCustomer = () => {
 
-  const idResponsable = JSON.parse(localStorage.getItem('user')).user.payload.user.idResponsableClient
+  const idResponsable = localStorage.getItem('user')?JSON.parse(localStorage.getItem('user')).user.payload.user.idResponsableClient:null
+  const navigate = useNavigate()
   const [services , setServices] = useState([])
 
   const getServices = (id) => {
@@ -43,8 +44,16 @@ const ServiceCustomer = () => {
     })
     .catch((err) => console.log(err))
   }
+  const Client = localStorage.getItem("user")?JSON.parse(localStorage.getItem("user")).user.payload.user:null
   useEffect(() => {
-    getServices(idResponsable)
+    if(localStorage.getItem('user')){
+      if(Client.isActive == false)
+        {
+          navigate('/wait')
+        }else{
+          getServices(idResponsable)
+        }
+    }
   },[])
 
   return (
@@ -53,7 +62,7 @@ const ServiceCustomer = () => {
         <CCol xs>
           <CCard className="mb-12">
             <CCardHeader>
-              <strong>Service</strong>
+              <strong>Services</strong>
             </CCardHeader>
             <CCardBody>
               <CRow xs={{ cols: 1, gutter: 4 }} xl={{ cols: 3 }} md={{ cols: 2 }}>

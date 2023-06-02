@@ -24,7 +24,7 @@ const GET_ORDER_FINI_URL = '/commande/get/Servicefini/'
 
 const Order = () => {
   
-    const idService = JSON.parse(localStorage.getItem('user')).user.payload.user.idService
+    const idService = localStorage.getItem('user')?JSON.parse(localStorage.getItem('user')).user.payload.user.idService:null
     const [orders, setOrders] = useState([])
 
     const get_Order_fini = (id) => {
@@ -72,7 +72,9 @@ const Order = () => {
       }) 
     }
     useEffect(() => {
+      if(localStorage.getItem('user')){
         get_Order_fini(idService)
+      }
     },[])
   return (
     <>
@@ -80,7 +82,7 @@ const Order = () => {
         <CCol xs={12}>
           <CCard className="mb-4">
             <CCardHeader>
-                <strong>Order</strong>
+                <strong>Orders</strong>
             </CCardHeader>  
             <CCardBody>
                 <CTable>
@@ -90,8 +92,8 @@ const Order = () => {
                       <CTableHeaderCell scope="col">Total</CTableHeaderCell>
                       <CTableHeaderCell scope="col">N table</CTableHeaderCell>
                       <CTableHeaderCell scope="col">Status</CTableHeaderCell>
-                      <CTableHeaderCell scope="col">DELETE</CTableHeaderCell>
-                      <CTableHeaderCell scope="col">DETAILS</CTableHeaderCell>
+                      <CTableHeaderCell scope="col">Delete</CTableHeaderCell>
+                      <CTableHeaderCell scope="col">Details</CTableHeaderCell>
                     </CTableRow>
                   </CTableHead>
                   <CTableBody>
@@ -104,8 +106,8 @@ const Order = () => {
                         order.etat === 'fini' ? <CBadge color="success">finished</CBadge> 
                         : <CBadge color="danger">cancel</CBadge>
                       }</CTableDataCell>
-                      <CTableDataCell><CButton color="danger" onClick={() => handleDelete(order._id)}>DELETE</CButton></CTableDataCell>
-                      <CTableDataCell><Link to={`/editOrder/${order._id}`}><CButton color="info">DETAILS</CButton></Link></CTableDataCell>
+                      <CTableDataCell><CButton color="danger" onClick={() => handleDelete(order._id)}>Delete</CButton></CTableDataCell>
+                      <CTableDataCell><Link to={`/editOrder/${order._id}`}><CButton color="info">Details</CButton></Link></CTableDataCell>
                     </CTableRow>
                     ): <CTableRow><CTableDataCell>Not Data Found</CTableDataCell></CTableRow>}
                   </CTableBody>

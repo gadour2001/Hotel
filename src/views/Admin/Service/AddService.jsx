@@ -29,7 +29,7 @@ const AddService = () => {
 
   const { id } = useParams()  
   const navigate = useNavigate()
-  const idAdmin = JSON.parse(localStorage.getItem('user')).user.payload.user._id
+  const idAdmin = localStorage.getItem('user')?JSON.parse(localStorage.getItem('user')).user.payload.user._id:null
   const [validated, setValidated] = useState(false)
 
   const [service_name, setService_name] = useState('')
@@ -115,9 +115,12 @@ const AddService = () => {
     })
     .catch((err) => console.log(err))
   }
+  
   useEffect(() => {
+    if(localStorage.getItem('user')){
     if(id !== '0')
       get_Service(id)
+    }
   },[id])
 
 
@@ -125,7 +128,7 @@ const AddService = () => {
     <>
       <CCard className="mb-4">
           <CCardHeader>
-            <strong>Service</strong> <small>Custom styles</small>
+            <strong>Service</strong>
           </CCardHeader>
           <CCardBody>
               <CForm
@@ -162,15 +165,14 @@ const AddService = () => {
                       id="validationServiceImage"
                       defaultValue={base64Image}
                       onChange={(e) => handleImageChange(e)}
-                      required
                     />
                     <CFormFeedback invalid>Please choose a Image.</CFormFeedback>
                     </CInputGroup>
                 </CCol> 
                 <CCol xs={12}>
-                    <CButton color="primary" type="submit">
-                    Submit form
-                    </CButton>
+                <CButton color="primary" type="submit">
+                  {id === '0' ? "Add Service" : "Update Service "}
+                </CButton>
                 </CCol>
               </CForm>
           </CCardBody>

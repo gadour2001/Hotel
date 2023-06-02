@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate , useParams } from 'react-router-dom'
+import Swal from 'sweetalert2'
 import {
   CButton,
   CCard,
@@ -12,6 +13,11 @@ import {
   CInputGroup,
   CInputGroupText,
   CRow,
+  CModal,
+  CModalBody,
+  CModalFooter,
+  CModalHeader,
+  CModalTitle,
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import { cilLockLocked, cilUser } from '@coreui/icons'
@@ -21,14 +27,21 @@ import io from "socket.io-client";
 const socket = io.connect("http://localhost:5001");
 
 const LOGIN_URL = '/user/login'
-const UPDATE_CUSTOM_DATE_URL = '/client/put/dateEntre/'
+const UPDATE_CUSTOM_LOG_URL = '/client/putlog/'
+const RESET_PASSWORD_URL = '/user/forgotPassword'
+const UPDATE_CUSTOM_IDRESPO_URL = '/client/putidRespo/'
 
 const Login = () => {
 
-  const navigate = useNavigate()
+  const [email_forget,setEmail_forget] = useState('')
 
+  const navigate = useNavigate()
+  const { id } = useParams()
+
+  const [visible, setVisible] = useState(false)
   const [email,setEmail] = useState('')
   const [password,setPassword] = useState('')
+
   const [loading , setLoading] = useState(false)
   const [message , setMessage] = useState('')
 
@@ -40,21 +53,29 @@ const Login = () => {
       if (res.user.payload.user.role === 'superAdmin') {navigate("/dashboardSuperAdmin")}
       else if(res.user.payload.user.role === 'responsableClient'){navigate("/dashboardCustomerManager")}
       else if(res.user.payload.user.role === 'client'){
-        if(res.user.payload.user.isActive === false)
-          {
-            if(res.user.payload.user.dateEnter != Date.now()){
-              axiosApi.edit(UPDATE_CUSTOM_DATE_URL,res.user.payload.user._id).then(() => {
+        if(res.user.payload.user.isActive === false){
+          if(id == '0'){
+            Swal.fire(
+              'Updated!',
+              'Please scanne QR Code',
+              'error'
+            )
+          }
+          else{
+            if(res.user.payload.user.idResponsableClient == id){
+              axiosApi.edit(UPDATE_CUSTOM_LOG_URL,res.user.payload.user._id).then(() => {
                 socket.emit("add_Custom")
                 navigate('/wait')
               }).catch((err) => console.log(err))
             }else{
-              socket.emit("add_Custom")
-              navigate('/wait')
+              axiosApi.edit(UPDATE_CUSTOM_IDRESPO_URL,res.user.payload.user._id, { idResponsable : id}).then(() => {
+                socket.emit("add_Custom")
+                navigate('/wait')
+              }).catch((err) => console.log(err))
             }
           }
-          
-        else
-          {navigate('/home')}
+        }
+        else{navigate('/home')}
       }
       else if(res.user.payload.user.role === 'responsableService'){navigate("/dashboardServiceManager")} 
       else if(res.user.payload.user.role === 'admin') {navigate("/dashboardAdmin")}
@@ -63,11 +84,23 @@ const Login = () => {
     })
     setLoading(false)
   }
+
+  const ForgotPassword  = () => {
+    axiosApi.post(RESET_PASSWORD_URL,{email : email_forget})
+    .then((res) => {
+      setVisible(false)
+    }).catch((err) => console.log(err))
+  }
+
+  const user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')).user.payload.user : null;
+
   useEffect(()=>{
-    if(localStorage.getItem('user')){
-      switch (JSON.parse(localStorage.getItem('user')).user.payload.user.role) {
+    if(user){
+      switch (user.role) {
         case 'client':
-          navigate('/home')
+          if(user.isActive == true){
+            navigate('/home')
+          }
           break;
 
         case 'superAdmin':
@@ -87,12 +120,11 @@ const Login = () => {
           break;
       
         default:
+          navigate(`login/${id}`)
           break;
       }
-      navigate('/home')
     }
   },[])
- 
   return (
     <div className="bg-light min-vh-100 d-flex flex-row align-items-center">
       <CContainer>
@@ -137,7 +169,7 @@ const Login = () => {
                         </CButton>
                       </CCol>
                       <CCol xs={6} className="text-right">
-                        <CButton color="link" className="px-0">
+                        <CButton color="link" className="px-0" onClick={() => setVisible(true)}>
                           Forgot password?
                         </CButton>
                       </CCol>
@@ -160,7 +192,7 @@ const Login = () => {
                       Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
                       tempor incididunt ut labore et dolore magna aliqua.
                     </p>
-                    <Link to="/register">
+                    <Link to={`/register/${id}`}>
                       <CButton color="primary" className="mt-3" active tabIndex={-1}>
                         Register Now!
                       </CButton>
@@ -172,6 +204,29 @@ const Login = () => {
           </CCol>
         </CRow>
       </CContainer>
+
+      <CModal scrollable visible={visible}>
+          <CModalHeader>
+            <CModalTitle>Reset Password</CModalTitle>
+          </CModalHeader>
+          <CModalBody>
+            <CInputGroup>
+            <CFormInput 
+              type="email" 
+              id="validationCustom05" 
+              placeholder='example@gmail.com'
+              onChange={(e) => setEmail_forget(e.target.value)}
+              required 
+            />
+            </CInputGroup>
+          </CModalBody>
+          <CModalFooter>
+            <CButton color="secondary" onClick={() => setVisible(false)}>
+              Close
+            </CButton>
+            <CButton color="primary" onClick={() => ForgotPassword()} >Search</CButton>
+          </CModalFooter>
+        </CModal>
     </div>
   )
 }

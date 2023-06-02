@@ -42,7 +42,7 @@ const ADD_CUSTOMER_MANAGER_URL = '/responsableClient/register'
 const AddManager = () => {
 
   const [validated, setValidated] = useState(false)
-  const idAdmin = JSON.parse(localStorage.getItem('user')).user.payload.user._id
+  const idAdmin = localStorage.getItem('user')?JSON.parse(localStorage.getItem('user')).user.payload.user._id:null
   const { id } = useParams()
 
   const [manager_username , setManager_username] = useState('')
@@ -50,6 +50,7 @@ const AddManager = () => {
   const [manager_password , setManager_password] = useState('')
   const [manager_date , setManager_date] = useState('')
   const [manager_service , setManager_service] = useState('')
+  const [manager_Role , setManager_Role] = useState('')
 
   const [services , setServices] = useState([])
 
@@ -63,7 +64,6 @@ const AddManager = () => {
   }
 
   const handleSubmitService = (event) => {
-    console.log(id);
     const form = event.currentTarget
     if (form.checkValidity() === false) {
       event.preventDefault()
@@ -72,8 +72,6 @@ const AddManager = () => {
     {
       if(id === '0')
       {
-      console.log(idAdmin);
-
         event.preventDefault()
         axiosApi.post(ADD_SERVICE_MANAGER_URL, {
           username:manager_username,
@@ -84,7 +82,6 @@ const AddManager = () => {
           idAdmin:idAdmin
         })
         .then((res) => {
-          console.log('success')
           Swal.fire(
             'Added!',
             'Your manager has been added.',
@@ -92,7 +89,6 @@ const AddManager = () => {
           )
         })
         .catch((err) => {
-          console.log('failed')
           Swal.fire(
             'Failed!',
             "Your manager has been dosen't updated.",
@@ -128,7 +124,6 @@ const AddManager = () => {
   const get_ServiceManager = (id) => {
     axiosApi.getBYID(GET_SERVICE_MANAGER_URL , id)
     .then((res) => {
-      console.log(res)
       setManager_username(res.username)
       setManager_email(res.email)
       setManager_password(res.password)
@@ -170,6 +165,7 @@ const AddManager = () => {
             required />
           <CFormFeedback invalid>Please choose an Email.</CFormFeedback>
       </CCol>
+      {id === '0' ? (
       <CCol md={4}>
           <CFormLabel htmlFor="validationCustom03">Password</CFormLabel>
           <CFormInput 
@@ -180,6 +176,7 @@ const AddManager = () => {
             required />
           <CFormFeedback invalid>Please choose a Password.</CFormFeedback>
       </CCol>
+      ) : ("")}
       <CCol md={4}>
           <CFormLabel htmlFor="validationCustom04">Date of Birth</CFormLabel>
           <CFormInput 
@@ -194,7 +191,7 @@ const AddManager = () => {
           <CFormLabel htmlFor="validationCustom02">Service</CFormLabel>
           <CFormSelect 
             aria-label="Default select example" 
-            defaultValue={manager_service}
+            value={manager_service}
             onChange={(e) => {setManager_service(e.target.value)}}
           >
               <option>choose a service</option>
@@ -204,15 +201,14 @@ const AddManager = () => {
           </CFormSelect>
       </CCol>
       <CCol xs={12}>
-          <CButton color="primary" type="submit">
-          Submit form
-          </CButton>
+        <CButton color="primary" type="submit">
+          {id === '0' ? "Add Service Manager" : "Update Service Manager"}
+        </CButton>
       </CCol>
     </CForm>   
                     
   )
 
-                                    ///////////////////////////////////////////////////////////////////////////////////////////////////
 
   const handleSubmitCustomer = (event) => {
 
@@ -233,7 +229,6 @@ const AddManager = () => {
           idAdmin:idAdmin
         })
         .then((res) => {
-          console.log('success')
           Swal.fire(
             'Added!',
             'Your manager has been added.',
@@ -241,7 +236,6 @@ const AddManager = () => {
           )
         })
         .catch((err) => {
-          console.log('failed')
           Swal.fire(
             'Failed!',
             "Your manager has been dosen't updated.",
@@ -276,7 +270,6 @@ const AddManager = () => {
   const get_CustomerManager = (id) => {
     axiosApi.getBYID(GET_CUSTOMER_MANAGER_URL , id)
     .then((res) => {
-      console.log(res)
       setManager_username(res.username)
       setManager_email(res.email)
       setManager_password(res.password)
@@ -324,6 +317,7 @@ const AddManager = () => {
             required />
           <CFormFeedback invalid>Please choose an Email.</CFormFeedback>
       </CCol>
+      {id === '0' ? (
       <CCol md={4}>
           <CFormLabel htmlFor="validationCustom03">Password</CFormLabel>
           <CFormInput 
@@ -334,6 +328,7 @@ const AddManager = () => {
             required />
           <CFormFeedback invalid>Please choose a Password.</CFormFeedback>
       </CCol>
+      ) : ("")}
       <CCol md={4}>
           <CFormLabel htmlFor="validationCustom04">Date of Birth</CFormLabel>
           <CFormInput 
@@ -345,17 +340,20 @@ const AddManager = () => {
           <CFormFeedback invalid>Please choose a Date.</CFormFeedback>
       </CCol>
       <CCol xs={12}>
-          <CButton color="primary" type="submit">
-          Submit form
-          </CButton>
+        <CButton color="primary" type="submit">
+          {id === '0' ? "Add Customer Manager" : "Update Customer Manager"}
+        </CButton>
     </CCol>
     </CForm>
   );
+  const user = localStorage.getItem('user')?JSON.parse(localStorage.getItem('user')).user.payload.user._id:null
+
   useEffect(() => {
-    
+    if(user){
     if(id !== '0'){
       axiosApi.getBYID(GET_RESPONSABLE_BY_ID,id)
       .then((res) => {
+        setManager_Role(res.role)
         if(res.role === 'responsableClient'){
           get_CustomerManager(id)
           setActiveForm('customer')
@@ -371,30 +369,66 @@ const AddManager = () => {
     {
       get_Service(idAdmin)
     }
+  }
   },[])
   
   return (
     <>
       <CCard className="mb-4">
           <CCardHeader>
-            <strong>Manager</strong> <small>Custom styles</small>
+            <strong>Manager</strong>
           </CCardHeader>
           <CCardBody>
             <div className="example">
-              <CNav variant="tabs">
-                <CNavItem>
-                  <CNavLink active={activeForm === 'service'} onClick={() => handleNavClick('service')}>
-                    <CIcon icon={cilMediaPlay} className="me-2" />
-                    Service Manager
-                  </CNavLink>
-                </CNavItem>
-                <CNavItem>
-                  <CNavLink active={activeForm === 'customer'} onClick={() => handleNavClick('customer')}>
-                    <CIcon icon={cilMediaPlay} className="me-2" />
-                    Customer Manager
-                  </CNavLink>
-                </CNavItem>
-              </CNav>
+              
+                {id === '0' ? ( 
+                  <CNav variant="tabs">
+                    <CNavItem>
+                      <CNavLink active={activeForm === 'service'} onClick={() => handleNavClick('service')}>
+                        <CIcon icon={cilMediaPlay} className="me-2" />
+                        Service Manager
+                      </CNavLink>
+                    </CNavItem>
+                    <CNavItem>
+                      <CNavLink active={activeForm === 'customer'} onClick={() => handleNavClick('customer')}>
+                        <CIcon icon={cilMediaPlay} className="me-2" />
+                        Customer Manager
+                      </CNavLink>
+                    </CNavItem>
+                  </CNav>
+                ) : (
+                  manager_Role === 'responsableClient' ? (
+                    <CNav variant="tabs">
+                      <CNavItem>
+                        <CNavLink active={activeForm === 'service'} onClick={() => handleNavClick('service')} disabled>
+                          <CIcon icon={cilMediaPlay} className="me-2" />
+                          Service Manager
+                        </CNavLink>
+                      </CNavItem>
+                      <CNavItem>
+                        <CNavLink active={activeForm === 'customer'} onClick={() => handleNavClick('customer')}>
+                          <CIcon icon={cilMediaPlay} className="me-2" />
+                          Customer Manager
+                        </CNavLink>
+                      </CNavItem>
+                    </CNav>
+                  ) : (
+                    <CNav variant="tabs">
+                      <CNavItem>
+                        <CNavLink active={activeForm === 'service'} onClick={() => handleNavClick('service')}>
+                          <CIcon icon={cilMediaPlay} className="me-2" />
+                          Service Manager
+                        </CNavLink>
+                      </CNavItem>
+                      <CNavItem>
+                        <CNavLink active={activeForm === 'customer'} onClick={() => handleNavClick('customer')} disabled>
+                          <CIcon icon={cilMediaPlay} className="me-2" />
+                          Customer Manager
+                        </CNavLink>
+                      </CNavItem>
+                    </CNav>
+                  ))}
+              
             </div>
             {activeForm === 'service' && renderForm1()}
             {activeForm === 'customer' && renderForm2()}

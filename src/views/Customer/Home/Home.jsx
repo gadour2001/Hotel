@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 // Import Swiper React components
 import { Swiper, SwiperSlide } from "swiper/react";
 
@@ -11,8 +11,22 @@ import "src/assets/css/homeCustom.css";
 
 // import required modules
 import { Navigation, Pagination, Mousewheel, Keyboard } from "swiper";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
+
+  const navigate = useNavigate()
+
+  const Client = localStorage.getItem("user")?JSON.parse(localStorage.getItem("user")).user.payload.user:null
+    useEffect(() => {
+      if(localStorage.getItem('user')){
+        if(Client.isActive == false)
+        {
+          navigate('/wait')
+        }else{
+        } 
+      }
+    },[])
   return (
     <div className="html">
       <div className="body">

@@ -45,7 +45,7 @@ const AddAdmin = () => {
       event.stopPropagation()
     }else
     {
-      const idSuperAdmin  = JSON.parse(localStorage.getItem('user')).user.payload.user._id
+      const idSuperAdmin  = localStorage.getItem('user')?JSON.parse(localStorage.getItem('user')).user.payload.user._id:null
       if(id === '0')
       {
         event.preventDefault()
@@ -117,8 +117,10 @@ const AddAdmin = () => {
     .catch((err) => console.log(err))
   }
   useEffect(() => {
+    if(localStorage.getItem('user')){
     if(id !== '0')
       get_Admin(id)
+    }
   },[id])
   
   return (

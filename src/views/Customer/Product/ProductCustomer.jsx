@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import * as axiosApi from 'src/api/axiosApi';
 import {
   CCard,
@@ -39,7 +39,7 @@ const GET_PRODUCT_URL = '/product/get/'
 
 const ProductCustomer = () => {
   const { id } = useParams();
-
+  const navigate = useNavigate()
   const [visible, setVisible] = useState(false)
 
   const [categorys, setCategorys] = useState([]);
@@ -48,6 +48,7 @@ const ProductCustomer = () => {
   const [cart, setCart] = useState([]);
 
   useEffect(() => {
+    if(localStorage.getItem('user')){
     const get_Category_Service = (id) => {
       axiosApi
         .getBYID(GET_CATEGORYS_BY_SERVICE_URL, id)
@@ -55,16 +56,24 @@ const ProductCustomer = () => {
         .catch((err) => console.log(err))
     }
     get_Category_Service(id);
+  }
   }, [id]);
-
+  const Client = localStorage.getItem("user")?JSON.parse(localStorage.getItem("user")).user.payload.user:null
   useEffect(() => {
-    const get_Product_Category = () => {
-      axiosApi
-        .get(GET_PRODUCTS_BY_CATEGORY_URL)
-        .then((res) => setProducts(res))
-        .catch((err) => console.log(err))
+    if(localStorage.getItem('user')){
+      if(Client.isActive == false)
+      {
+        navigate('/wait')
+      }else{
+        const get_Product_Category = () => {
+          axiosApi
+            .get(GET_PRODUCTS_BY_CATEGORY_URL)
+            .then((res) => setProducts(res))
+            .catch((err) => console.log(err))
+        }
+        get_Product_Category()
+      }
     }
-    get_Product_Category()
   },[])
   // const get_Product = async (id) => {
   //   await axiosApi

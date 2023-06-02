@@ -25,7 +25,7 @@ import PropTypes from 'prop-types'
 const CardService = (props) => {
   return (
     <CCard>
-        <img orientation="top" src={props.image} alt={props.name} className='img'/>
+        <img orientation="top" src={props.image} alt={props.name} className='img' style={{height:'300px'}}/>
         <CCardBody>
           <CCardTitle>{props.name}</CCardTitle>
           <CCardText>{props.description}</CCardText>

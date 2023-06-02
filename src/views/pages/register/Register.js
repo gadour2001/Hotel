@@ -1,4 +1,4 @@
-import React , { useState } from 'react'
+import React , { useEffect, useState } from 'react'
 import {
   CButton,
   CCard,
@@ -10,10 +10,15 @@ import {
   CInputGroup,
   CInputGroupText,
   CRow,
+  CModal,
+  CModalBody,
+  CModalFooter,
+  CModalHeader,
+  CModalTitle,
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import { cilLockLocked, cilUser , cilCalendar , cilCreditCard} from '@coreui/icons'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import * as axiosApi from 'src/api/axiosApi'
 import io from "socket.io-client";
 
@@ -22,7 +27,10 @@ const socket = io.connect("http://localhost:5001");
 const CLIENT_REGISTER = '/client/register'
 
 const Register = () => {
+
+  const { id } = useParams()
   const navigate = useNavigate()
+  const [visible, setVisible] = useState(false)
 
   const [username, setUsername] = useState("")
   const [email, setEmail] = useState("")
@@ -30,8 +38,40 @@ const Register = () => {
   const [passport, setPassport] = useState("")
   const [birthday, setBirthday] = useState(null)
 
-  const idRespo = '647098afc1c80802c1c5393e'
+  const [codeValue, setCodeValue] = useState('')
+  const [code, setCode] = useState('')
 
+
+  const role = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')).user.payload.user.role : null;
+
+  useEffect(()=>{
+      switch (role) {
+        case 'client':
+          navigate('/home')
+          break;
+
+        case 'superAdmin':
+          navigate('/dashboardSuperAdmin')
+          break;
+
+        case 'responsableClient':
+          navigate('/dashboardCustomerManager')
+          break;
+
+        case 'responsableService':
+          navigate('/dashboardServiceManager')
+          break;
+
+        case 'admin':
+          navigate('/dashboardAdmin')
+          break;
+      
+        default:
+          break;
+      }
+      
+  },[])
+ 
   const handleRegister = (e) => {
     e.preventDefault()
     axiosApi.post(CLIENT_REGISTER,{
@@ -40,13 +80,19 @@ const Register = () => {
       password : password,
       dateBirth : birthday,
       idPassport : passport,
-      idResp : "647098afc1c80802c1c5393e",
+      idResp : id,
     })
     .then((res) => {
+      setCode (res.verificationCode)
+    }).catch((err) => console.log(err))
+  }
+  const verifemail = () => {
+   
+    if (code == codeValue) {
+      setVisible(false)
       socket.emit("add_Custom")
       navigate('/')
-    })
-    .catch((err) => console.log(err))
+    }
   }
 
   return (
@@ -105,7 +151,7 @@ const Register = () => {
                     />
                   </CInputGroup>
                   <div className="d-grid">
-                    <CButton color="success" onClick={(e) => handleRegister(e)}>Create Account</CButton>
+                    <CButton color="primary" onClick={(e) => {handleRegister(e);setVisible(true)}}>Create Account</CButton>
                   </div>
                 </CForm>
               </CCardBody>
@@ -113,6 +159,28 @@ const Register = () => {
           </CCol>
         </CRow>
       </CContainer>
+      <CModal scrollable visible={visible}>
+          <CModalHeader>
+            <CModalTitle>Code verification</CModalTitle>
+          </CModalHeader>
+          <CModalBody>
+            <CInputGroup>
+            <CFormInput 
+              type="number" 
+              id="validationCustom05" 
+              placeholder='123456'
+              onChange={(e) => setCodeValue(e.target.value)}
+              required 
+            />
+            </CInputGroup>
+          </CModalBody>
+          <CModalFooter>
+            <CButton color="secondary" onClick={() => setVisible(false)}>
+              Close
+            </CButton>
+            <CButton color="primary" onClick={()=>{verifemail()}} >Verif</CButton>
+          </CModalFooter>
+        </CModal>
     </div>
   )
 }

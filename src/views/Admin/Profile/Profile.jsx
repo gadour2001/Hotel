@@ -21,7 +21,7 @@ const UPDATE_PASSWORD_URL = '/user/putPassword/'
 
 const Profile = () => {
 
-  const idSuperAdmin = localStorage.getItem('user')?JSON.parse(localStorage.getItem('user')).user.payload.user._id:null
+  const idAdmin = localStorage.getItem('user')?JSON.parse(localStorage.getItem('user')).user.payload.user._id:null
 
   const [visible, setVisible] = useState(false)
   const [oldPassword , setOldPassword] = useState('')
@@ -30,7 +30,7 @@ const Profile = () => {
 
   const EditPassword = () => {
     if(newPassword === confirmPassword){
-      axiosApi.put(UPDATE_PASSWORD_URL , idSuperAdmin , {newPassword : newPassword , oldPassword : oldPassword })
+      axiosApi.put(UPDATE_PASSWORD_URL , idAdmin , {newPassword : newPassword , oldPassword : oldPassword })
       .then(() => {
         setVisible(false)
         Swal.fire(

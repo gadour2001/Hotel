@@ -19,7 +19,7 @@ const Accordion = () => {
         <CCard className="mb-4">
           <CCardHeader>
             <strong>React Accordion</strong>
-          </CCardHeader>
+          </CCardHeader> 
           <CCardBody>
             <p className="text-medium-emphasis small">
               Click the accordions below to expand/collapse the accordion content.

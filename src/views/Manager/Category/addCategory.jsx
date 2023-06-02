@@ -29,7 +29,7 @@ const AddCategory = () => {
 
   const navigate = useNavigate()
   const { id } = useParams()
-  const idService = JSON.parse(localStorage.getItem('user')).user.payload.user.idService
+  const idService = localStorage.getItem('user')?JSON.parse(localStorage.getItem('user')).user.payload.user.idService:null
 
   const [validated, setValidated] = useState(false)
   
@@ -126,16 +126,18 @@ const AddCategory = () => {
     .catch((err) => console.log(err))
   }
   useEffect(() => {
+    if(localStorage.getItem('user')){
     get_Service(idService)
     if(id !== '0'){
       get_Category(id)
     }
+  }
   },[id])
   return (
     <>
       <CCard className="mb-4">
           <CCardHeader>
-            <strong>CATEGORY</strong>
+            <strong>Category</strong>
           </CCardHeader>
           <CCardBody>
               <CForm
@@ -181,7 +183,6 @@ const AddCategory = () => {
                         defaultValue={category_image}
                         aria-describedby="inputGroupPrepend"
                         onChange={(e) => {handleImageChange(e)}}
-                        required
                     />
                     <CFormFeedback invalid>Please choose a Image.</CFormFeedback>
                     </CInputGroup>

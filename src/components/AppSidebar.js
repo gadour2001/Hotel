@@ -18,11 +18,16 @@ import { useNavigate } from 'react-router-dom'
 
 const AppSidebar = () => {
   const dispatch = useDispatch()
+  const navigate = useNavigate()
   const unfoldable = useSelector((state) => state.sidebarUnfoldable)
   const sidebarShow = useSelector((state) => state.sidebarShow)
 
-  const role=JSON.parse(localStorage.getItem('user')).user.payload.user.role
-
+  const role=localStorage.getItem('user')?JSON.parse(localStorage.getItem('user')).user.payload.user.role:null
+  useEffect(()=>{
+    if (role==null) {
+      navigate('login/0')
+    }
+  },[])
  
   return (
     <CSidebar
@@ -44,7 +49,7 @@ const AppSidebar = () => {
             role === 'responsableService' ? (<AppSidebarNav items={navigation._navServiceManager} />) :
             role === 'responsableClient' ? (<AppSidebarNav items={navigation._navCustomerManager} />) :
             role === 'admin' ? (<AppSidebarNav items={navigation._navAdmin} />) :
-            (<AppSidebarNav items={navigation._navCustomer} />)
+            role === 'client' ? (<AppSidebarNav items={navigation._navCustomer} />) : ""
           }
         </SimpleBar>
       </CSidebarNav>  

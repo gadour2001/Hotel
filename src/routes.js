@@ -50,6 +50,8 @@ const Toasts = React.lazy(() => import('./views/notifications/toasts/Toasts'))
 
 const Widgets = React.lazy(() => import('./views/widgets/Widgets'))
 
+const PageNotFound = React.lazy(() => import('./views/pages/page404/Page404'))
+
 // Admin
 const DashboardAdmin = React.lazy(() => import('./views/Admin/Dashboard/DashboardAdmin'))
 const Service = React.lazy(() => import('./views/Admin/Service/Service'))
@@ -81,87 +83,117 @@ const Home = React.lazy(() => import('./views/Customer/Home/Home'))
 const ServiceCustomer = React.lazy(() => import('./views/Customer/Service/ServiceCustomer'))
 const ProductCustomer = React.lazy(() => import('./views/Customer/Product/ProductCustomer'))
 const Cart = React.lazy(() => import('./views/Customer/Cart/cart'))
-const OrderCustom = React.lazy(() => import('./views/Customer/Order/OrderCustomer'))
 const History = React.lazy(() => import('./views/Customer/History/History'))
 const Profil = React.lazy(() => import('./views/Customer/Profil/Profil'))
 
 // Page Vide
+let routes=[];
+const role =  localStorage.getItem('user')?JSON.parse(localStorage.getItem('user')).user.payload.user.role:null
+switch (role) {
+  case 'client':
+    routes = [
 
-const routes = [
-  { path: '/', exact: true, name: 'Home' },
-  { path: '/dashboard', name: 'Dashboard', element: Dashboard },
-  { path: '/theme', name: 'Theme', element: Colors, exact: true },
-  { path: '/theme/colors', name: 'Colors', element: Colors },
-  { path: '/theme/typography', name: 'Typography', element: Typography },
-  { path: '/base', name: 'Base', element: Cards, exact: true },
-  { path: '/base/accordion', name: 'Accordion', element: Accordion },
-  { path: '/base/breadcrumbs', name: 'Breadcrumbs', element: Breadcrumbs },
-  { path: '/base/cards', name: 'Cards', element: Cards },
-  { path: '/base/carousels', name: 'Carousel', element: Carousels },
-  { path: '/base/collapses', name: 'Collapse', element: Collapses },
-  { path: '/base/list-groups', name: 'List Groups', element: ListGroups },
-  { path: '/base/navs', name: 'Navs', element: Navs },
-  { path: '/base/paginations', name: 'Paginations', element: Paginations },
-  { path: '/base/placeholders', name: 'Placeholders', element: Placeholders },
-  { path: '/base/popovers', name: 'Popovers', element: Popovers },
-  { path: '/base/progress', name: 'Progress', element: Progress },
-  { path: '/base/spinners', name: 'Spinners', element: Spinners },
-  { path: '/base/tables', name: 'Tables', element: Tables },
-  { path: '/base/tooltips', name: 'Tooltips', element: Tooltips },
-  { path: '/buttons', name: 'Buttons', element: Buttons, exact: true },
-  { path: '/buttons/buttons', name: 'Buttons', element: Buttons },
-  { path: '/buttons/dropdowns', name: 'Dropdowns', element: Dropdowns },
-  { path: '/buttons/button-groups', name: 'Button Groups', element: ButtonGroups },
-  { path: '/charts', name: 'Charts', element: Charts },
-  { path: '/forms', name: 'Forms', element: FormControl, exact: true },
-  { path: '/forms/form-control', name: 'Form Control', element: FormControl },
-  { path: '/forms/select', name: 'Select', element: Select },
-  { path: '/forms/checks-radios', name: 'Checks & Radios', element: ChecksRadios },
-  { path: '/forms/range', name: 'Range', element: Range },
-  { path: '/forms/input-group', name: 'Input Group', element: InputGroup },
-  { path: '/forms/floating-labels', name: 'Floating Labels', element: FloatingLabels },
-  { path: '/forms/layout', name: 'Layout', element: Layout },
-  { path: '/forms/validation', name: 'Validation', element: Validation },
-  { path: '/icons', exact: true, name: 'Icons', element: CoreUIIcons },
-  { path: '/icons/coreui-icons', name: 'CoreUI Icons', element: CoreUIIcons },
-  { path: '/icons/flags', name: 'Flags', element: Flags },
-  { path: '/icons/brands', name: 'Brands', element: Brands },
-  { path: '/notifications', name: 'Notifications', element: Alerts, exact: true },
-  { path: '/notifications/alerts', name: 'Alerts', element: Alerts },
-  { path: '/notifications/badges', name: 'Badges', element: Badges },
-  { path: '/notifications/modals', name: 'Modals', element: Modals },
-  { path: '/notifications/toasts', name: 'Toasts', element: Toasts },
-  { path: '/widgets', name: 'Widgets', element: Widgets },
+      { path: '/home', name: 'Home', element: Home },
+      { path: '/serviceCustomer', name: 'Service', element: ServiceCustomer },
+      { path: '/serviceCustomer/productCustomer/:id', name: 'Product', element: ProductCustomer },
+      { path: '/cart', name: 'Cart', element: Cart },
+      { path: '/history', name: 'History', element: History },
+      { path: '/profil', name: 'Profil', element: Profil },
+      { path: '/*', name: 'PageNotFound', element: PageNotFound },
+    ]
+    break;
 
-  { path: '/dashboardAdmin', name: 'DashboardAdmin', element: DashboardAdmin },
-  { path: '/service', name: 'Service', element: Service },
-  { path: '/service/addService/:id', name: 'AddService', element: AddService }, 
-  { path: '/manager', name: 'Manager', element: Manager },
-  { path: '/manager/addManager/:id', name: 'AddManager', element: AddManager },
+  case 'superAdmin':
+    routes = [
 
-  { path: '/dashboardCustomerManager', name: 'Dashboard', element: DashboardCustomerManager },
-  { path: '/client', name: 'Customer', element: Client },
+      { path: '/dashboardSuperAdmin', name: 'DashboardSuperAdmin', element: DashboardSuperAdmin },
+      { path: '/admin', name: 'Admin', element: Admin },
+      { path: '/admin/addAdmin/:id', name: 'AddAdmin', element: AddAdmin },
+      { path: '/profileSuperAdmin', name: 'Profile', element: Profile },
+      { path: '/*', name: 'PageNotFound', element: PageNotFound },
+    ]
+    break;
 
-  { path: '/dashboardServiceManager', name: 'DashboardServiceManager', element: DashboardServiceManager },
-  { path: '/order', name: 'Order', element: Order },
-  { path: '/editOrder/:id', name: 'EditOrder', element: EditOrder },
-  { path: '/category', name: 'Category', element: Category },
-  { path: '/category/addCategory/:id', name: 'AddCategory', element: AddCategory },
-  { path: '/product', name: 'Product', element: Product },
-  { path: '/product/addProduct/:idProduct/:idCategory', name: 'AddProduct', element: AddProduct }, 
+  case 'responsableClient':
+    routes = [
+      { path: '/dashboardCustomerManager', name: 'Dashboard', element: DashboardCustomerManager },
+      { path: '/client', name: 'Customer', element: Client },
+      { path: '/*', name: 'PageNotFound', element: PageNotFound },
+    ]
+    break;
 
-  { path: '/dashboardSuperAdmin', name: 'DashboardSuperAdmin', element: DashboardSuperAdmin },
-  { path: '/admin', name: 'Admin', element: Admin },
-  { path: '/admin/addAdmin/:id', name: 'AddAdmin', element: AddAdmin },
-  { path: '/profileSuperAdmin', name: 'Profile', element: Profile },
+  case 'responsableService':
+    routes = [
 
-  { path: '/home', name: 'Home', element: Home },
-  { path: '/serviceCustomer', name: 'Service', element: ServiceCustomer },
-  { path: '/serviceCustomer/productCustomer/:id', name: 'Product', element: ProductCustomer },
-  { path: '/cart', name: 'Cart', element: Cart },
-  { path: '/orderCustom', name: 'OrderCustom', element: OrderCustom },
-  { path: '/history', name: 'History', element: History },
-  { path: '/profil', name: 'Profil', element: Profil },
-]
+      { path: '/dashboardServiceManager', name: 'DashboardServiceManager', element: DashboardServiceManager },
+      { path: '/order', name: 'Order', element: Order },
+      { path: '/editOrder/:id', name: 'EditOrder', element: EditOrder },
+      { path: '/category', name: 'Category', element: Category },
+      { path: '/category/addCategory/:id', name: 'AddCategory', element: AddCategory },
+      { path: '/product', name: 'Product', element: Product },
+      { path: '/product/addProduct/:idProduct/:idCategory', name: 'AddProduct', element: AddProduct },
+      { path: '/*', name: 'PageNotFound', element: PageNotFound },
+    ]
+    break;
+
+  case 'admin':
+    routes = [
+      { path: '/dashboardAdmin', name: 'DashboardAdmin', element: DashboardAdmin },
+      { path: '/service', name: 'Service', element: Service },
+      { path: '/service/addService/:id', name: 'AddService', element: AddService }, 
+      { path: '/manager', name: 'Manager', element: Manager },
+      { path: '/manager/addManager/:id', name: 'AddManager', element: AddManager },
+      { path: '/*', name: 'PageNotFound', element: PageNotFound },
+    ]
+    break;
+}
+  // { path: '/dashboard', name: 'Dashboard', element: Dashboard },
+  // { path: '/theme', name: 'Theme', element: Colors, exact: true },
+  // { path: '/theme/colors', name: 'Colors', element: Colors },
+  // { path: '/theme/typography', name: 'Typography', element: Typography },
+  // { path: '/base', name: 'Base', element: Cards, exact: true },
+  // { path: '/base/accordion', name: 'Accordion', element: Accordion },
+  // { path: '/base/breadcrumbs', name: 'Breadcrumbs', element: Breadcrumbs },
+  // { path: '/base/cards', name: 'Cards', element: Cards },
+  // { path: '/base/carousels', name: 'Carousel', element: Carousels },
+  // { path: '/base/collapses', name: 'Collapse', element: Collapses },
+  // { path: '/base/list-groups', name: 'List Groups', element: ListGroups },
+  // { path: '/base/navs', name: 'Navs', element: Navs },
+  // { path: '/base/paginations', name: 'Paginations', element: Paginations },
+  // { path: '/base/placeholders', name: 'Placeholders', element: Placeholders },
+  // { path: '/base/popovers', name: 'Popovers', element: Popovers },
+  // { path: '/base/progress', name: 'Progress', element: Progress },
+  // { path: '/base/spinners', name: 'Spinners', element: Spinners },
+  // { path: '/base/tables', name: 'Tables', element: Tables },
+  // { path: '/base/tooltips', name: 'Tooltips', element: Tooltips },
+  // { path: '/buttons', name: 'Buttons', element: Buttons, exact: true },
+  // { path: '/buttons/buttons', name: 'Buttons', element: Buttons },
+  // { path: '/buttons/dropdowns', name: 'Dropdowns', element: Dropdowns },
+  // { path: '/buttons/button-groups', name: 'Button Groups', element: ButtonGroups },
+  // { path: '/charts', name: 'Charts', element: Charts },
+  // { path: '/forms', name: 'Forms', element: FormControl, exact: true },
+  // { path: '/forms/form-control', name: 'Form Control', element: FormControl },
+  // { path: '/forms/select', name: 'Select', element: Select },
+  // { path: '/forms/checks-radios', name: 'Checks & Radios', element: ChecksRadios },
+  // { path: '/forms/range', name: 'Range', element: Range },
+  // { path: '/forms/input-group', name: 'Input Group', element: InputGroup },
+  // { path: '/forms/floating-labels', name: 'Floating Labels', element: FloatingLabels },
+  // { path: '/forms/layout', name: 'Layout', element: Layout },
+  // { path: '/forms/validation', name: 'Validation', element: Validation },
+  // { path: '/icons', exact: true, name: 'Icons', element: CoreUIIcons },
+  // { path: '/icons/coreui-icons', name: 'CoreUI Icons', element: CoreUIIcons },
+  // { path: '/icons/flags', name: 'Flags', element: Flags },
+  // { path: '/icons/brands', name: 'Brands', element: Brands },
+  // { path: '/notifications', name: 'Notifications', element: Alerts, exact: true },
+  // { path: '/notifications/alerts', name: 'Alerts', element: Alerts },
+  // { path: '/notifications/badges', name: 'Badges', element: Badges },
+  // { path: '/notifications/modals', name: 'Modals', element: Modals },
+  // { path: '/notifications/toasts', name: 'Toasts', element: Toasts },
+  // { path: '/widgets', name: 'Widgets', element: Widgets },
+
+ 
+
+
+
 
 export default routes

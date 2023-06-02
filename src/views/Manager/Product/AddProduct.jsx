@@ -46,10 +46,9 @@ const AddProduct = () => {
   const [product_name , setProduct_name] = useState('')
   const [product_prix , setProduct_prix] = useState('')
   const [product_description , setProduct_description] = useState('')
-  const [product_image , setProduct_image] = useState('')
   const [product_idCategory , setProduct_idCategory] = useState(idCategory)
   const [product_quantity , setProduct_quantity] = useState('')
-
+  const [product__t , setProduct__t] = useState('')
   const [product_duration , setProduct_duration] = useState('')
   const [product_nbrPlaces , setProduct_nbrPlaces] = useState('')
 
@@ -58,7 +57,7 @@ const AddProduct = () => {
   const [category_name , setCategory_name] = useState('')
 
 
-  const idService = JSON.parse(localStorage.getItem('user')).user.payload.user.idService
+  const idService = localStorage.getItem('user')?JSON.parse(localStorage.getItem('user')).user.payload.user.idService:null
   const [activeForm, setActiveForm] = useState('material')
 
   const [base64Image, setBase64Image] = useState('')
@@ -225,7 +224,7 @@ const AddProduct = () => {
           <CFormFeedback invalid>Please choose a Quantity.</CFormFeedback>
       </CCol>
       <CCol md={4}>
-      <CFormLabel htmlFor="validationCustom06">Categorie</CFormLabel>
+      <CFormLabel htmlFor="validationCustom06">Category</CFormLabel>
       {idCategory === '0' ? (
           <CFormSelect 
             aria-label="Default select example" 
@@ -247,15 +246,15 @@ const AddProduct = () => {
       )}
       </CCol>
       <CCol xs={12}>
-          <CButton color="primary" type="submit">
-          Submit form
-          </CButton>
+        <CButton color="primary" type="submit">
+          {idProduct === '0' ? "Add Physical Product" : "Update Physical Product"}
+        </CButton>
       </CCol>
     </CForm>   
                     
   )
 
-                                    ///////////////////////////////////////////////////////////////////////////////////////////////////
+
 
   const handleSubmitServiceProduct = (event) => {
 
@@ -384,7 +383,7 @@ const AddProduct = () => {
           id="validationCustom04" 
           defaultValue={base64Image}
           onChange={(e) => handleImageChange(e)}
-          required />
+        />
         <CFormFeedback invalid>Please choose a Image.</CFormFeedback>
     </CCol>
     <CCol md={4}>
@@ -410,7 +409,7 @@ const AddProduct = () => {
         <CFormFeedback invalid>Please choose a Nbr Places.</CFormFeedback>
     </CCol>
     <CCol md={4}>
-      <CFormLabel htmlFor="validationCustom06">Categorie</CFormLabel>
+      <CFormLabel htmlFor="validationCustom06">Category</CFormLabel>
       {idCategory === '0' ? (
           <CFormSelect 
             aria-label="Default select example" 
@@ -432,19 +431,21 @@ const AddProduct = () => {
       )}
       </CCol>
     <CCol xs={12}>
-          <CButton color="primary" type="submit">
-          Submit form
-          </CButton>
+      <CButton color="primary" type="submit">
+        {idProduct === '0' ? "Add Service Product" : "Update Service Product"}
+      </CButton>
     </CCol>
     </CForm>
   );
   useEffect(() => {
+    if(localStorage.getItem('user')){
     if(idCategory !== '0')
     {
       get_Category_Name(idCategory)
       if(idProduct !== '0'){
         axiosApi.getBYID(GET_PRODUCT_URL , idProduct)
         .then((res) => {
+          setProduct__t(res.__t)
           if(res.__t === 'materialProduct')
             get_MaterialProduct(idProduct)
           else
@@ -454,43 +455,64 @@ const AddProduct = () => {
     }
     else
       get_Categorys(idService)
+  }
   },[])
   
   return (
     <>
       <CCard className="mb-4">
           <CCardHeader>
-            <strong>Product</strong> <small>Custom styles</small>
+            <strong>Product</strong>
           </CCardHeader>
           <CCardBody>
-            <p className="text-medium-emphasis small">
-              For custom CoreUI form validation messages, you&#39;ll need to add the{' '}
-              <code>noValidate</code> boolean property to your <code>&lt;CForm&gt;</code>. This
-              disables the browser default feedback tooltips, but still provides access to the form
-              validation APIs in JavaScript. Try to submit the form below; our JavaScript will
-              intercept the submit button and relay feedback to you. When attempting to submit,
-              you&#39;ll see the <code>:invalid</code> and <code>:valid</code> styles applied to
-              your form controls.
-            </p>
-            <p className="text-medium-emphasis small">
-              Custom feedback styles apply custom colors, borders, focus styles, and background
-              icons to better communicate feedback.{' '}
-            </p>
             <div className="example">
-              <CNav variant="tabs">
-                <CNavItem>
-                  <CNavLink active={activeForm === 'material'} onClick={() => handleNavClick('material')}>
-                    <CIcon icon={cilMediaPlay} className="me-2" />
-                    Physical Product
-                  </CNavLink>
-                </CNavItem>
-                <CNavItem>
-                  <CNavLink active={activeForm === 'service'} onClick={() => handleNavClick('service')}>
-                    <CIcon icon={cilMediaPlay} className="me-2" />
-                    Material Product
-                  </CNavLink>
-                </CNavItem>
-              </CNav>
+            {idProduct === '0' ? ( 
+                  <CNav variant="tabs">
+                    <CNavItem>
+                      <CNavLink active={activeForm === 'material'} onClick={() => handleNavClick('material')} >
+                        <CIcon icon={cilMediaPlay} className="me-2" />
+                        Physical Product
+                      </CNavLink>
+                    </CNavItem>
+                    <CNavItem>
+                      <CNavLink active={activeForm === 'service'} onClick={() => handleNavClick('service')}>
+                        <CIcon icon={cilMediaPlay} className="me-2" />
+                        Service Product
+                      </CNavLink>
+                    </CNavItem>
+                  </CNav>
+                ) : (
+                  product__t === 'materialProduct' ? (
+                    <CNav variant="tabs">
+                      <CNavItem>
+                        <CNavLink active={activeForm === 'material'} onClick={() => handleNavClick('material')} >
+                          <CIcon icon={cilMediaPlay} className="me-2" />
+                          Physical Product
+                        </CNavLink>
+                      </CNavItem>
+                      <CNavItem>
+                        <CNavLink active={activeForm === 'service'} onClick={() => handleNavClick('service')} disabled>
+                          <CIcon icon={cilMediaPlay} className="me-2" />
+                          Service Product
+                        </CNavLink>
+                      </CNavItem>
+                    </CNav>
+                  ) : (
+                    <CNav variant="tabs">
+                      <CNavItem>
+                        <CNavLink active={activeForm === 'material'} onClick={() => handleNavClick('material')} disabled>
+                          <CIcon icon={cilMediaPlay} className="me-2" />
+                          Physical Product
+                        </CNavLink>
+                      </CNavItem>
+                      <CNavItem>
+                        <CNavLink active={activeForm === 'service'} onClick={() => handleNavClick('service')}>
+                          <CIcon icon={cilMediaPlay} className="me-2" />
+                          Service Product
+                        </CNavLink>
+                      </CNavItem>
+                    </CNav>
+                  ))}
             </div>
             {activeForm === 'material' && renderForm1()}
             {activeForm === 'service' && renderForm2()}

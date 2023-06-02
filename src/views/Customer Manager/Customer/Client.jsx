@@ -22,18 +22,25 @@ import {
 import * as axiosApi  from 'src/api/axiosApi'
 
 
-const GET_ALL_CLIENTS_URL = '/client/getByResponsable'
+const GET_ALL_CLIENTS_URL = '/client/getByResponsable/'
 const UPDATE_CUSTOM_SOLD_URL = '/client/updateSold/'
 const UPDATE_CUSTOM_STATUS_URL = '/client/put/status/'
+const ADD_LOG_URL = '/log/postLog'
 
 const Client = () => {
 
   const [clients ,setClients] = useState([])
-    const get_Clients = () => {
-        axiosApi.get(GET_ALL_CLIENTS_URL)
-        .then((res) => setClients(res))
-        .catch((err) => console.log(err))
+  const idManager = localStorage.getItem('user')?JSON.parse(localStorage.getItem('user')).user.payload.user._id:null
+  const idAdmin = localStorage.getItem('user')?JSON.parse(localStorage.getItem('user')).user.payload.user.idAdmin:null
+
+    const get_Clients = (id) => {
+      axiosApi.getBYID(GET_ALL_CLIENTS_URL , id)
+      .then((res) => {
+        setClients(res)
+      }).catch((err) => console.log(err))
+        
     }
+
     const updateCustomStatus = async (id) => {
         setClients((prevState) =>
           prevState.map((client) =>
@@ -50,6 +57,7 @@ const Client = () => {
         .then(() => { console.log('Custom status updated successfully.')
         }).catch((error) => console.error('Error updating service status:', error))
     }
+    
     const UpdateSold = async (id) => {
       const { value: sold } = await Swal.fire({
         title: 'Input Sold ',
@@ -63,21 +71,26 @@ const Client = () => {
           title:`Entered Soled : ${sold} DT`,
           icon: 'success',
         })
-        axiosApi.put(UPDATE_CUSTOM_SOLD_URL , id, {sold : sold})
-        .then((res) => setClients((prevState) =>
-          prevState.map((client) =>
-          client._id === id
-              ? {
+        axiosApi.put(UPDATE_CUSTOM_SOLD_URL , id , {sold : sold})
+        .then((res) => {
+          console.log(id);
+          axiosApi.post(ADD_LOG_URL, { idClient : id , idResponsable : idManager , sold : sold }).then((res) => {
+            console.log(res)
+          }).catch((err) => console.log(err))
+          setClients((prevState) =>
+            prevState.map((client) =>
+            client._id === id ? {
                   ...client,
                   solde: parseFloat(client.solde) + parseFloat(sold),
-                }
-              : client
+                }: client
           )
-        ))
+        )})
       }
     }
     useEffect(() =>{
-        get_Clients()
+      if(localStorage.getItem('user')){
+        get_Clients(idAdmin)
+      }
     },[])
     
   return (
@@ -86,7 +99,7 @@ const Client = () => {
         <CCol xs={12}>
           <CCard className="mb-4">
             <CCardHeader>
-                <strong>Client</strong>
+                <strong>Customers</strong>
             </CCardHeader>
             <CCardBody>
                 <CTable>
@@ -96,12 +109,12 @@ const Client = () => {
                       <CTableHeaderCell scope="col">Email</CTableHeaderCell>
                       <CTableHeaderCell scope="col">Date of Birth</CTableHeaderCell>
                       <CTableHeaderCell scope="col">Passport</CTableHeaderCell>
-                      <CTableHeaderCell scope="col">Date-Enter</CTableHeaderCell>
+                      <CTableHeaderCell scope="col">Date of entry</CTableHeaderCell>
                       <CTableHeaderCell scope="col">Stay</CTableHeaderCell>
-                      <CTableHeaderCell scope="col">Solde</CTableHeaderCell>
+                      <CTableHeaderCell scope="col">Sold</CTableHeaderCell>
                       <CTableHeaderCell scope="col">Room Num</CTableHeaderCell>
                       <CTableHeaderCell scope="col">ON / OFF</CTableHeaderCell>
-                      <CTableHeaderCell scope="col">ADD SOLDE</CTableHeaderCell>
+                      <CTableHeaderCell scope="col">Add Sold</CTableHeaderCell>
                     </CTableRow>
                   </CTableHead>
                   <CTableBody>
@@ -125,7 +138,7 @@ const Client = () => {
                               updateCustomStatus(client._id)
                             }}
                         /></CTableDataCell>
-                      <CTableDataCell>{client.isActive === true ? (<CButton color='info' onClick={() => UpdateSold(client._id)}><CIcon icon={cilMoney} className="me-2" />ADD SOLDE</CButton>) : ""}</CTableDataCell>
+                      <CTableDataCell>{client.isActive === true ? (<CButton color='info' onClick={() => UpdateSold(client._id)}><CIcon icon={cilMoney} className="me-2" />Add Sold</CButton>) : ""}</CTableDataCell>
                       </CTableRow>
                     ) : <CTableRow><CTableDataCell>Not Data Found</CTableDataCell></CTableRow>}
                   </CTableBody>

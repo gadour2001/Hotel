@@ -32,7 +32,7 @@ const UPDATE_PRODUCT_URL = '/materialproduct/editQuantity/'
 
 const Product = () => {
 
-  const idService = JSON.parse(localStorage.getItem('user')).user.payload.user.idService
+  const idService = localStorage.getItem('user')?JSON.parse(localStorage.getItem('user')).user.payload.user.idService:null
     const [categorys , setCategorys] = useState([])
     const [products , setProducts] = useState([])
     
@@ -91,7 +91,9 @@ const Product = () => {
       }) 
     }
     useEffect(() => {
+      if(localStorage.getItem('user')){
         get_Category_Service(idService)
+      }
     })
     const handleStock = async (idP , idC) => {  
       const { value: quantity } = await Swal.fire({
@@ -118,18 +120,18 @@ const Product = () => {
       <CCol xs={12}>
         <CCard className="mb-4">
           <CCardHeader>
-            <strong>Product</strong>
+            <strong>Products</strong>
             <div className="d-grid gap-2 d-md-flex justify-content-md-end">
                 <Link to={'/product/addProduct/0/0'}><CButton color="info">Add Product</CButton></Link>
             </div>
           </CCardHeader>
           <CCardBody>
             <p className="text-medium-emphasis small">
-                Click the category below to expand his products.
+                Click the category below to expand the products.
             </p>
-              <CAccordion>
+               <CAccordion>{/* activeItemKey={'6470c277434676e323871bab'} */}
                 {categorys.length > 0 ? categorys.map((category) => (
-                <CAccordionItem itemKey={category._id} key={category._id} onClick={() => get_Products_Category(category._id)}>
+                <CAccordionItem itemKey={category._id} key={category._id} onClick={() => get_Products_Category(category._id)} activeItemKey={category._id}>
                   <CAccordionHeader>{category.name}</CAccordionHeader>
                   <CAccordionBody>
                     <CTable>
@@ -140,8 +142,8 @@ const Product = () => {
                         <CTableHeaderCell scope="col">Price</CTableHeaderCell>
                         <CTableHeaderCell scope="col">Quantity</CTableHeaderCell>
                         <CTableHeaderCell scope="col">Type</CTableHeaderCell>
-                        <CTableHeaderCell scope="col">UPDATE</CTableHeaderCell>
-                        <CTableHeaderCell scope="col">DELETE</CTableHeaderCell>
+                        <CTableHeaderCell scope="col">Update</CTableHeaderCell>
+                        <CTableHeaderCell scope="col">Delete</CTableHeaderCell>
                         <CTableHeaderCell scope="col"><Link to={`/product/addProduct/0/${category._id}`}><CButton color="info">Add Product</CButton></Link></CTableHeaderCell>
                       </CTableRow>
                     </CTableHead>
@@ -150,11 +152,11 @@ const Product = () => {
                       <CTableRow key={product._id}>
                         <CTableDataCell><img style={{width:70+'px'}} src={product.image} alt={product.name} /></CTableDataCell>
                         <CTableDataCell>{product.name}</CTableDataCell>
-                        <CTableDataCell>{product.prix}</CTableDataCell>
+                        <CTableDataCell>{product.prix} DT</CTableDataCell>
                         <CTableDataCell>{product.quantity}</CTableDataCell>
-                        <CTableDataCell>{product.__t === 'materialProduct' ? "Material" : "Physical"}</CTableDataCell>
-                        <CTableDataCell><Link to={`/product/addProduct/${product._id}/${category._id}`}><CButton color="warning">UPDATE</CButton></Link></CTableDataCell>
-                        <CTableDataCell><CButton color="danger" onClick={() => handleDelete(product._id)}>DELETE</CButton></CTableDataCell>
+                        <CTableDataCell>{product.__t === 'materialProduct' ? "Material Product" : "Physical Product"}</CTableDataCell>
+                        <CTableDataCell><Link to={`/product/addProduct/${product._id}/${category._id}`}><CButton color="warning">Update</CButton></Link></CTableDataCell>
+                        <CTableDataCell><CButton color="danger" onClick={() => handleDelete(product._id)}>Delete</CButton></CTableDataCell>
                         {product.quantity === -1 ? "" : (<CTableDataCell><CButton color="success" onClick={() => handleStock(product._id,category._id)}>Add Quantity</CButton></CTableDataCell>)}
                       </CTableRow>
                       )) : <CTableRow><CTableDataCell>Not Data Found</CTableDataCell></CTableRow>}

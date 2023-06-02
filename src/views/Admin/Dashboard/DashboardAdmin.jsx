@@ -1,9 +1,10 @@
 import React from 'react'
+import WidgetsDropdown from '../../widgets/WidgetsDropdown'
 
 const DashboardAdmin = () => {
   return (
     <div>
-      Dashboard Admin
+      <WidgetsDropdown />
     </div>
   )
 }

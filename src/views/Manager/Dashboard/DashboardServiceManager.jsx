@@ -56,7 +56,7 @@ const UPDATE_COMMANDE_STATUS = '/commande/update/status/'
 
 const DashboardServiceManager = () => {
     const [orders, setOrders] = useState([])
-    const idService = JSON.parse(localStorage.getItem('user')).user.payload.user.idService
+    const idService = localStorage.getItem('user')?JSON.parse(localStorage.getItem('user')).user.payload.user.idService:null
 
     const get_Order = (id) => {
         axiosApi.getBYID(GET_ORDER_URL , id)
@@ -71,7 +71,9 @@ const DashboardServiceManager = () => {
         }).catch((err) => console.log(err))
     }
     useEffect(() => {
+      if(localStorage.getItem('user')){
         get_Order(idService)
+      }
     },[])
     useEffect(() => {
       socket.on("add_Order", () => {
@@ -90,7 +92,7 @@ const DashboardServiceManager = () => {
         <CCol xs={12}>
           <CCard className="mb-4">
             <CCardHeader>
-                <strong>Order</strong> <small>Basic example</small>
+                <strong>Orders</strong>
             </CCardHeader>
             <CCardBody>
                 <CTable>
@@ -100,20 +102,20 @@ const DashboardServiceManager = () => {
                       <CTableHeaderCell scope="col">Price</CTableHeaderCell>
                       <CTableHeaderCell scope="col">N table</CTableHeaderCell>
                       <CTableHeaderCell scope="col">Status</CTableHeaderCell>   
-                      <CTableHeaderCell scope="col">DETAILS</CTableHeaderCell>   
+                      <CTableHeaderCell scope="col">Details</CTableHeaderCell>   
                     </CTableRow>
                   </CTableHead>
                   <CTableBody>
                     {orders.length > 0 ?orders.map((order) => 
                     <CTableRow key={order._id} className={ order.etat === 'en attente' ? "table-warning" : "table-success"}>
                       <CTableDataCell>{order.date}</CTableDataCell>
-                      <CTableDataCell>{order.prixTotal}</CTableDataCell>
+                      <CTableDataCell>{order.prixTotal} DT</CTableDataCell>
                       <CTableDataCell>{order.numtable}</CTableDataCell>
                       <CTableDataCell>{
                         order.etat === 'en attente' ? <CButton color="warning" onClick={() => handleUpdateStatus(order._id,'en cours')}>On Progress</CButton> 
                         : <CButton color="success" onClick={() => handleUpdateStatus(order._id,'fini')}>Finished</CButton>
                       }</CTableDataCell>
-                      <CTableDataCell><Link to={`/editOrder/${order._id}`}><CButton color="info">DETAILS</CButton></Link></CTableDataCell>
+                      <CTableDataCell><Link to={`/editOrder/${order._id}`}><CButton color="info">Details</CButton></Link></CTableDataCell>
                     </CTableRow>
                     ): <CTableRow><CTableDataCell>Not Data Found</CTableDataCell></CTableRow>}
                   </CTableBody>

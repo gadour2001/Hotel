@@ -39,21 +39,21 @@ const _navCustomer = [
   },
   {
     component: CNavItem,
-    name: 'Service',  
+    name: 'Services',  
     to: '/serviceCustomer',
     icon: <CIcon icon={cilList} customClassName="nav-icon" />,
   },
   {
     component: CNavItem,
-    name: 'Profil',
+    name: 'Profile',
     to: '/profil',
     icon: <CIcon icon={cilUser} customClassName="nav-icon" />,
   },
   {
     component: CNavItem,
-    name: 'History',
+    name: 'Orders',
     to: '/history',
-    icon: <CIcon icon={cilHistory} customClassName="nav-icon" />,
+    icon: <CIcon icon={cilClipboard} customClassName="nav-icon" />,
   }
 ]
 const _navAdmin = [
@@ -73,13 +73,13 @@ const _navAdmin = [
   },
   {
     component: CNavItem,
-    name: 'Service',
+    name: 'Services',
     to: '/service',
     icon: <CIcon icon={cilList} customClassName="nav-icon" />,
   },
   {
     component: CNavItem,
-    name: 'Manager',
+    name: 'Managers',
     to: '/manager',
     icon: <CIcon icon={cilPeople} customClassName="nav-icon" />,
   }
@@ -91,25 +91,25 @@ const _navServiceManager = [
   },
   {
   component: CNavItem,
-    name: 'DachboardManager',
+    name: 'Dachboard',
     to: '/dashboardServiceManager',
     icon: <CIcon icon={cilSpeedometer} customClassName="nav-icon" />,
   },
   {
     component: CNavItem,
-    name: 'Order',
+    name: 'Orders',
     to: '/order',
     icon: <CIcon icon={cilClipboard} customClassName="nav-icon" />,
   },
   {
     component: CNavItem,
-    name: 'Category',
+    name: 'Categorys',
     to: '/category',
     icon: <CIcon icon={cilListRich} customClassName="nav-icon" />,
   },
   {
     component: CNavItem,
-    name: 'Product',
+    name: 'Products',
     to: '/product',
     icon: <CIcon icon={cilLayers} customClassName="nav-icon" />,
   }
@@ -131,7 +131,7 @@ const _navCustomerManager = [
   },
   {
     component: CNavItem,
-    name: 'Customer',
+    name: 'Customers',
     to: '/client',
     icon: <CIcon icon={cilUser} customClassName="nav-icon" />,
   },
@@ -153,8 +153,14 @@ const _nav = [
   },
   {
     component: CNavItem,
-    name: 'Admin',
+    name: 'Administrators',
     to: '/admin',
+    icon: <CIcon icon={cilUser} customClassName="nav-icon" />,
+  },
+  {
+    component: CNavItem,
+    name: 'Profile',
+    to: '/profileSuperAdmin',
     icon: <CIcon icon={cilUser} customClassName="nav-icon" />,
   },
   {

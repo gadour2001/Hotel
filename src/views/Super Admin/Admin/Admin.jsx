@@ -73,7 +73,9 @@ const Admin = () => {
       }) 
     }
     useEffect(() => {
+      if(localStorage.getItem('user')){
         get_Admin()
+      }
     },[])
   return (
     <div>
@@ -81,7 +83,7 @@ const Admin = () => {
         <CCol xs={12}>
           <CCard className="mb-4">
             <CCardHeader>
-                <strong>Administrator</strong>
+                <strong>Administrators</strong>
                 <div className="d-grid gap-2 d-md-flex justify-content-md-end">
                     <Link to='/admin/addAdmin/0'><CButton color="info"><CIcon icon={cilUserFollow} className="me-2" />Add Administrator</CButton></Link>
                 </div>
@@ -92,10 +94,10 @@ const Admin = () => {
                     <CTableRow>
                       <CTableHeaderCell scope="col">Username</CTableHeaderCell>
                       <CTableHeaderCell scope="col">Email</CTableHeaderCell>
-                      <CTableHeaderCell scope="col">Date-Birthday</CTableHeaderCell>
+                      <CTableHeaderCell scope="col">Date of Birth</CTableHeaderCell>
                       <CTableHeaderCell scope="col">Hotel Name</CTableHeaderCell>
-                      <CTableHeaderCell scope="col">UPDATE</CTableHeaderCell>
-                      <CTableHeaderCell scope="col">DELETE</CTableHeaderCell>
+                      <CTableHeaderCell scope="col">Update</CTableHeaderCell>
+                      <CTableHeaderCell scope="col">Delete</CTableHeaderCell>
                     </CTableRow>
                   </CTableHead>
                   <CTableBody>
@@ -109,8 +111,8 @@ const Admin = () => {
                             day: '2-digit'
                         }).split('/').reverse().join('-')}</CTableDataCell>
                       <CTableDataCell>{admin.hotelName}</CTableDataCell>
-                      <CTableDataCell><Link to={`/admin/addAdmin/${admin._id}`}><CButton color="warning">UPDATE</CButton></Link></CTableDataCell>
-                      <CTableDataCell><CButton color="danger" onClick={() => handleDelete(admin._id)}>DELETE</CButton></CTableDataCell>
+                      <CTableDataCell><Link to={`/admin/addAdmin/${admin._id}`}><CButton color="warning">Update</CButton></Link></CTableDataCell>
+                      <CTableDataCell><CButton color="danger" onClick={() => handleDelete(admin._id)}>Delete</CButton></CTableDataCell>
                       </CTableRow>
                     ) : <CTableRow><CTableDataCell>Not Data Found</CTableDataCell></CTableRow>}
                   </CTableBody>

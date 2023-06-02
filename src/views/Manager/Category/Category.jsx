@@ -26,7 +26,7 @@ const DELETE_CATEGORY_URL = '/category/delete/'
 const Category = () => {
 
     const [categorys , setCategorys] = useState([])
-    const idService = JSON.parse(localStorage.getItem('user')).user.payload.user.idService
+    const idService = localStorage.getItem('user')?JSON.parse(localStorage.getItem('user')).user.payload.user.idService:null
     
     const get_Category_Service = (id) => {
         axiosApi.getBYID(GET_CATEGORYS_BY_SERVICE_URL,id)   
@@ -79,7 +79,10 @@ const Category = () => {
       }) 
     }
     useEffect(() => {
+      if (idService) {
+        
         get_Category_Service(idService)
+      }
     })
  
   return (
@@ -88,7 +91,7 @@ const Category = () => {
         <CCol xs={12}>
           <CCard className="mb-4">
             <CCardHeader>
-                <strong>Category</strong>
+                <strong>Categorys</strong>
               <div className="d-grid gap-2 d-md-flex justify-content-md-end">
                 <Link to={'/category/addCategory/0'}><CButton color="info">Add Category</CButton></Link>
               </div>
@@ -99,17 +102,17 @@ const Category = () => {
                     <CTableRow>
                       <CTableHeaderCell scope="col">Image</CTableHeaderCell>
                       <CTableHeaderCell scope="col">Name</CTableHeaderCell>
-                      <CTableHeaderCell scope="col">UPDATE</CTableHeaderCell>
-                      <CTableHeaderCell scope="col">DELETE</CTableHeaderCell>
+                      <CTableHeaderCell scope="col">Update</CTableHeaderCell>
+                      <CTableHeaderCell scope="col">Delete</CTableHeaderCell>
                     </CTableRow>
                   </CTableHead>
                   <CTableBody>
                     {categorys.length > 0 ?categorys.map((category) => 
                     <CTableRow key={category._id}>
-                      <CTableDataCell><img style={{width:70+'px'}} src={category.image} alt={category.name} /></CTableDataCell>
+                      <CTableDataCell><img style={{height:60+'px'}} src={category.image} alt={category.name} /></CTableDataCell>
                       <CTableDataCell>{category.name}</CTableDataCell>
-                      <CTableDataCell><Link to={`/category/addCategory/${category._id}`}><CButton color="warning">UPDATE</CButton></Link></CTableDataCell>
-                      <CTableDataCell><CButton color="danger" onClick={() => handleDelete(category._id)}>DELETE</CButton></CTableDataCell>
+                      <CTableDataCell><Link to={`/category/addCategory/${category._id}`}><CButton color="warning">Update</CButton></Link></CTableDataCell>
+                      <CTableDataCell><CButton color="danger" onClick={() => handleDelete(category._id)}>Delete</CButton></CTableDataCell>
                     </CTableRow>
                     ): <CTableRow><CTableDataCell>Not Data Found</CTableDataCell></CTableRow>}
                   </CTableBody>

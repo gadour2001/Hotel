@@ -20,10 +20,18 @@ import { logo } from 'src/assets/brand/logo'
 import  cart  from 'src/assets/images/cart.png'
 
 const AppHeader = () => {
+  const navigate = useNavigate()
 
   const dispatch = useDispatch()
   const sidebarShow = useSelector((state) => state.sidebarShow)
-  const role = JSON.parse(localStorage.getItem('user')).user.payload.user.role
+  const role = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')).user.payload.user.role : null
+
+  useEffect(()=>{
+    if (role==null) {
+      navigate('login/0')
+    }
+  },[])
+  
     return (
       <CHeader position="sticky" className="mb-4">
         <CContainer fluid>
@@ -40,7 +48,7 @@ const AppHeader = () => {
           <CHeaderNav className="ms-5">
             {role === 'client' ?( 
             <CNavItem>
-              <CNavLink href="#/cart" style={{ width: "3rem", height: "3rem", position: "relative" }}>
+              <CNavLink href="/cart" style={{ width: "3rem", height: "3rem", position: "relative" }}>
                 <img src={cart} alt='image' width={35} />
                 <div
               className="rounded-circle bg-danger d-flex justify-content-center align-item-center"
@@ -63,9 +71,9 @@ const AppHeader = () => {
           </CHeaderNav>
         </CContainer>
         <CHeaderDivider />
-        <CContainer fluid>
+        {/* <CContainer fluid>
           <AppBreadcrumb />
-        </CContainer>
+        </CContainer> */}
       </CHeader>
     )
 

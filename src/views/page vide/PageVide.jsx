@@ -8,6 +8,7 @@ const PageVide = () => {
   const navigate = useNavigate()
 
   useEffect(() => {
+    
     socket.on("valide_Custom", () => {
       navigate('/home')
     })

@@ -22,43 +22,55 @@ import { Link, useNavigate } from 'react-router-dom'
 
 const socket = io.connect("http://localhost:5001")
 
+const UPDATE_CUSTOM_SOLD_URL = '/client/updateSold/'
 const GET_ORDER_BY_CLIENT = '/commande/get/Client/'
 const UPDATE_COMMANDE_STATUS = "/commande/update/status/"
 
 const History = () => {
 
+  const navigate = useNavigate()
+
     const [orders, setOrders] = useState([])
-    const idCustom = JSON.parse(localStorage.getItem('user')).user.payload.user._id
-  
+    const idCustom = localStorage.getItem('user')?JSON.parse(localStorage.getItem('user')).user.payload.user._id:null
+    
 
     const get_Order_By_Client = (id) => {
         axiosApi.getBYID(GET_ORDER_BY_CLIENT , id)
         .then((res) =>setOrders(res))
         .catch((err) => console.log(err))
     }
-    
+    const Client = localStorage.getItem("user")?JSON.parse(localStorage.getItem("user")).user.payload.user:null
     useEffect(() => {
-        get_Order_By_Client(idCustom)
+      if(localStorage.getItem('user')){
+        if(Client.isActive == false)
+        {
+          navigate('/wait')
+        }else{
+          get_Order_By_Client(idCustom)
+        } 
+      }
     },[idCustom])
 
     const handleUpdate = (id) => {
         axiosApi.put(UPDATE_COMMANDE_STATUS, id , {etat : 'annuler'}).then((res) => {
-          get_Order_By_Client(idCustom)
-          socket.emit("Edit_Order")
+          axiosApi.put(UPDATE_CUSTOM_SOLD_URL , idCustom , {sold : res.updatedOrder.prixTotal}).then((res) => {
+            get_Order_By_Client(idCustom)
+            socket.emit("Edit_Order")
+          })
         }).catch((err) => console.log(err))
     }
     useEffect(() => {
       socket.on("Edit_Order", () => {
         get_Order_By_Client(idCustom)
-      });
-    }, [socket]);
+      })
+    }, [socket])
   return (
     <>
       <CRow>
         <CCol xs={12}>
           <CCard className="mb-4">
             <CCardHeader>
-                <strong>Order</strong>
+                <strong>Orders</strong>
             </CCardHeader>
             <CCardBody>
                 <CTable>
@@ -69,7 +81,7 @@ const History = () => {
                       <CTableHeaderCell scope="col">N table</CTableHeaderCell>
                       <CTableHeaderCell scope="col">Status</CTableHeaderCell>
                       <CTableHeaderCell scope="col">Action</CTableHeaderCell>
-                      <CTableHeaderCell scope="col">DETAILS</CTableHeaderCell>
+                      <CTableHeaderCell scope="col">Details</CTableHeaderCell>
                     </CTableRow>
                   </CTableHead>
                   <CTableBody>
