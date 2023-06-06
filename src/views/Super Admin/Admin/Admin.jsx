@@ -114,7 +114,7 @@ const Admin = () => {
                       <CTableDataCell><Link to={`/admin/addAdmin/${admin._id}`}><CButton color="warning">Update</CButton></Link></CTableDataCell>
                       <CTableDataCell><CButton color="danger" onClick={() => handleDelete(admin._id)}>Delete</CButton></CTableDataCell>
                       </CTableRow>
-                    ) : <CTableRow><CTableDataCell>Not Data Found</CTableDataCell></CTableRow>}
+                    ) : <CTableRow><CTableDataCell  colSpan={6} style={{textAlign:'center'}}>Data Not Found</CTableDataCell></CTableRow>}
                   </CTableBody>
                 </CTable>
             </CCardBody>

@@ -42,13 +42,13 @@ const History = () => {
     const Client = localStorage.getItem("user")?JSON.parse(localStorage.getItem("user")).user.payload.user:null
     useEffect(() => {
       if(localStorage.getItem('user')){
-        if(Client.isActive == false)
-        {
-          navigate('/wait')
-        }else{
+        // if(Client.isActive == false)
+        // {
+        //   navigate('/wait')
+        // }else{
           get_Order_By_Client(idCustom)
         } 
-      }
+      // }
     },[idCustom])
 
     const handleUpdate = (id) => {
@@ -78,7 +78,7 @@ const History = () => {
                     <CTableRow>
                       <CTableHeaderCell scope="col">Date</CTableHeaderCell>
                       <CTableHeaderCell scope="col">Total</CTableHeaderCell>
-                      <CTableHeaderCell scope="col">N table</CTableHeaderCell>
+                      <CTableHeaderCell scope="col">Table N°</CTableHeaderCell>
                       <CTableHeaderCell scope="col">Status</CTableHeaderCell>
                       <CTableHeaderCell scope="col">Action</CTableHeaderCell>
                       <CTableHeaderCell scope="col">Details</CTableHeaderCell>
@@ -100,7 +100,7 @@ const History = () => {
                       <CTableDataCell>{order.etat === 'en attente' ? (<CButton color="danger" onClick={() => handleUpdate(order._id)}>Cancel</CButton>) : "..."}</CTableDataCell>
                       <CTableDataCell><Link to={`/editOrder/${order._id}`}><CButton color="secondary">Details</CButton></Link></CTableDataCell>
                     </CTableRow>
-                    ): <CTableRow><CTableDataCell>Not Data Found</CTableDataCell></CTableRow>}
+                    ): <CTableRow><CTableDataCell colSpan={6} style={{textAlign:'center'}}>Data Not Found</CTableDataCell></CTableRow>}
                   </CTableBody>
                 </CTable>
             </CCardBody>

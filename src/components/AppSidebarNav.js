@@ -56,10 +56,12 @@ export const AppSidebarNav = ({ items }) => {
   }
 
   return (
+    <div style={{backgroundColor:'#102542 '}}>
     <React.Fragment>
       {items &&
         items.map((item, index) => (item.items ? navGroup(item, index) : navItem(item, index)))}
     </React.Fragment>
+    </div>
   )
 }
 

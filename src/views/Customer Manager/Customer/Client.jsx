@@ -60,15 +60,15 @@ const Client = () => {
     
     const UpdateSold = async (id) => {
       const { value: sold } = await Swal.fire({
-        title: 'Input Sold ',
+        title: 'New Balance ',
         input: 'number',
-        inputLabel: 'New Sold',
-        inputPlaceholder: 'Enter New Sold'
+        inputLabel: '',
+        inputPlaceholder: 'Enter New Balance'
       })
       
       if (sold) {
         Swal.fire({
-          title:`Entered Soled : ${sold} DT`,
+          title:`Balance Entered : ${sold} DT`,
           icon: 'success',
         })
         axiosApi.put(UPDATE_CUSTOM_SOLD_URL , id , {sold : sold})
@@ -108,13 +108,13 @@ const Client = () => {
                       <CTableHeaderCell scope="col">Username</CTableHeaderCell>
                       <CTableHeaderCell scope="col">Email</CTableHeaderCell>
                       <CTableHeaderCell scope="col">Date of Birth</CTableHeaderCell>
-                      <CTableHeaderCell scope="col">Passport</CTableHeaderCell>
+                      <CTableHeaderCell scope="col">Passport ID / ID</CTableHeaderCell>
                       <CTableHeaderCell scope="col">Date of entry</CTableHeaderCell>
                       <CTableHeaderCell scope="col">Stay</CTableHeaderCell>
-                      <CTableHeaderCell scope="col">Sold</CTableHeaderCell>
-                      <CTableHeaderCell scope="col">Room Num</CTableHeaderCell>
+                      <CTableHeaderCell scope="col">Balance</CTableHeaderCell>
+                      <CTableHeaderCell scope="col">Room N°</CTableHeaderCell>
                       <CTableHeaderCell scope="col">ON / OFF</CTableHeaderCell>
-                      <CTableHeaderCell scope="col">Add Sold</CTableHeaderCell>
+                      <CTableHeaderCell scope="col">Add Balance</CTableHeaderCell>
                     </CTableRow>
                   </CTableHead>
                   <CTableBody>
@@ -131,16 +131,16 @@ const Client = () => {
                       <CTableDataCell>{client.dateEntre}</CTableDataCell>
                       <CTableDataCell>{client.nbrJour}</CTableDataCell>
                       <CTableDataCell>{client.solde}</CTableDataCell>
-                      <CTableDataCell>{client.numChamber}</CTableDataCell>
+                      <CTableDataCell>{client.numChambre}</CTableDataCell>
                       <CTableDataCell><ReactSwitch
                             checked={client.isActive === true}
                             onChange={() => {
                               updateCustomStatus(client._id)
                             }}
                         /></CTableDataCell>
-                      <CTableDataCell>{client.isActive === true ? (<CButton color='info' onClick={() => UpdateSold(client._id)}><CIcon icon={cilMoney} className="me-2" />Add Sold</CButton>) : ""}</CTableDataCell>
+                      <CTableDataCell>{client.isActive === true ? (<CButton color='info' onClick={() => UpdateSold(client._id)}><CIcon icon={cilMoney} className="me-2" />Add Balance</CButton>) : ""}</CTableDataCell>
                       </CTableRow>
-                    ) : <CTableRow><CTableDataCell>Not Data Found</CTableDataCell></CTableRow>}
+                    ) : <CTableRow><CTableDataCell colSpan={10} style={{textAlign:'center'}}>Data Not Found</CTableDataCell></CTableRow>}
                   </CTableBody>
                 </CTable>
             </CCardBody>

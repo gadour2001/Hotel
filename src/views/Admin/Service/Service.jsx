@@ -102,10 +102,11 @@ const Service = () => {
         <CCol xs={12}>
           <CCard className="mb-4">
             <CCardHeader>
-                <strong>Service</strong>
-              <div className="d-grid gap-2 d-md-flex justify-content-md-end">
+              <div className='row'>
+                <h2 className="col-6" >Service</h2>
+              <div className="col-6 "style={{textAlign:'end'}}>
                 <Link to='/service/addService/0'><CButton color="info"><CIcon icon={cilPlaylistAdd} className="me-2" />Add Service</CButton></Link>
-              </div>
+              </div></div>
             </CCardHeader>
             <CCardBody>
                 <CTable>
@@ -132,7 +133,7 @@ const Service = () => {
                       <CTableDataCell><Link to={`/service/addService/${service._id}`}><CButton color="warning">Update</CButton></Link></CTableDataCell>
                       <CTableDataCell><CButton color="danger" onClick={() => handleDelete(service._id)}>Delete</CButton></CTableDataCell>
                     </CTableRow>
-                    ): <CTableRow><CTableDataCell>Not Data Found</CTableDataCell></CTableRow>}
+                    ): <CTableRow><CTableDataCell colSpan={5} style={{textAlign:'center'}}>Data Not Found</CTableDataCell></CTableRow>}
                   </CTableBody>
                 </CTable>
             </CCardBody>

@@ -22,29 +22,21 @@ import {
 import { Link } from 'react-router-dom'
 
 const GET_SERVICE_URL = '/service/get/'
-const GET_MANAGERS_SERVICE_URL = '/responsableService/ResponsableService/'
-const GET_MANAGERS_CLIENT_URL = '/responsableClient/ResponsableClient/'
+const GET_MANAGERS_URL = '/user/getResponsables/'
 const DELETE_MANAGER_URL = '/user/delete/'
 
 const Manager = () => {
     
     const [managers , setManagers] = useState([])
-    const [managersService , setManagersService] = useState([])
-    const [managersClient , setManagersClient] = useState([])
 
     const idAdmin = localStorage.getItem('user')?JSON.parse(localStorage.getItem('user')).user.payload.user._id:null
     // const [service_name , setService_name] = useState('')
 
     const get_Manager = (id) => {
-        axiosApi.getBYID(GET_MANAGERS_SERVICE_URL , id)
-        .then((res) =>{console.log(res);setManagersService(res)})
-        .catch((err) => console.log(err))
-        axiosApi.getBYID(GET_MANAGERS_CLIENT_URL , id)
-        .then((res) =>{console.log(res); setManagersClient(res)})
-        .catch((err) => console.log(err))
-        const mergedManagers = [...managersService, ...managersClient];
-        setManagers(mergedManagers  )
-        console.log(managers);
+        axiosApi.getBYID(GET_MANAGERS_URL , id)
+        .then((res) =>{
+          setManagers([...res.responsableService , ...res.responsableClient])
+        }).catch((err) => console.log(err))
     }
     const swalWithBootstrapButtons = Swal.mixin({
       customClass: {
@@ -92,7 +84,6 @@ const Manager = () => {
     
     useEffect(() => {
       if(localStorage.getItem('user')){
-        console.log(idAdmin)
         get_Manager(idAdmin)
       }
     },[])
@@ -102,9 +93,11 @@ const Manager = () => {
         <CCol xs={12}>
           <CCard className="mb-4">
             <CCardHeader>
-                <strong>Managers</strong>
-                <div className="d-grid gap-2 d-md-flex justify-content-md-end">
+              <div className='row'>
+                  <h2 className="col-6" >Manager</h2>
+                <div className="col-6 "style={{textAlign:'end'}}>
                     <Link to='/manager/addManager/0'><CButton color="info"><CIcon icon={cilUserFollow} className="me-2" />Add Manager</CButton></Link>
+                </div>
                 </div>
             </CCardHeader>
             <CCardBody>
@@ -133,7 +126,7 @@ const Manager = () => {
                       <CTableDataCell><Link to={`/manager/addManager/${manager._id}`}><CButton color="warning">Update</CButton></Link></CTableDataCell>
                       <CTableDataCell><CButton color="danger" onClick={() => handleDelete(manager._id)}>Delete</CButton></CTableDataCell>
                       </CTableRow>
-                    ) : <CTableRow><CTableDataCell>Not Data Found</CTableDataCell></CTableRow>}
+                    ) : <CTableRow><CTableDataCell colSpan={6} style={{textAlign:'center'}}>Data Not Found</CTableDataCell></CTableRow>}
                   </CTableBody>
                 </CTable>
             </CCardBody>

@@ -31,18 +31,21 @@ const EditOrder = () => {
     const [lignes , setlignes] = useState([])
     const [Commande , setCommande] = useState({})
 
-    const get_Order = (id) => {
-      
+    const get_lignes = (id) => {
+      axiosApi.getBYID(GET_LIGNECOMMAND_URL , id )
+        .then((res) => setlignes(res))
+        .catch((err) => console.log(err))
+    }
+    const get_order = () => {
+      axiosApi.getBYID(GET_COMMANDE_URL , id )
+        .then((res) => setCommande(res))
+        .catch((err) => console.log(err))
     }
 
     useEffect(() => {
       if(localStorage.getItem('user')){
-        axiosApi.getBYID(GET_LIGNECOMMAND_URL , id )
-        .then((res) => setlignes(res))
-        .catch((err) => console.log(err))
-        axiosApi.getBYID(GET_COMMANDE_URL , id )
-        .then((res) => setCommande(res))
-        .catch((err) => console.log(err))
+        get_lignes(id)
+        get_order(id)
       }
     },[id,lignes.length])
 
@@ -73,7 +76,7 @@ const EditOrder = () => {
               axiosApi.del(DELETE_LIGNECOMMAND_URL , id)
               .then(() => {
                 setlignes(lignes.filter((ligne) => ligne._id !== id))
-                get_Order(id)
+                get_order(id)
               })
               .catch((err) => console.log(err))
             } else if (result.dismiss === Swal.DismissReason.cancel ) {
@@ -89,7 +92,7 @@ const EditOrder = () => {
     <>
       <CRow>
         <CCol xs={12}>
-          <CCard className="mb-4">
+          <CCard  className="mb-4">
             <CCardHeader>
                 <strong>Order Details</strong> {
                         Commande.etat === 'fini' ? <CBadge color="success">Finished</CBadge> 
@@ -98,7 +101,16 @@ const EditOrder = () => {
                         : <CBadge color="danger">Cancel</CBadge>
                       }
             </CCardHeader>  
-            <CCardBody>
+            <div style={{border:'1px solid #d8dbe0',borderRadius:'20px',margin:'10px',padding:'20px'}}>
+
+          
+            <h5>Date : {new Date(Commande.date).toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: '2-digit',
+                            day: '2-digit'
+                        }).split('/').reverse().join('-')}</h5>
+            <h5>Table Number : {Commande.numtable}</h5>
+            <CCardBody >
                 <CTable>
                   <CTableHead>
                     <CTableRow>
@@ -116,21 +128,18 @@ const EditOrder = () => {
                       <CTableDataCell>{ligne.quantite * ligne.idProduct.prix} DT</CTableDataCell>
                       {role === 'responsableService' ? (<CTableDataCell><CButton color="danger" onClick={() => handleDelete(ligne._id)}>Delete</CButton></CTableDataCell>) : ""}
                     </CTableRow>
-                    ): <CTableRow><CTableDataCell>Not Data Found</CTableDataCell></CTableRow>}
+                    ): <CTableRow><CTableDataCell colSpan={3} style={{textAlign:'center'}}>Data Not Found</CTableDataCell></CTableRow>}
                   </CTableBody>
                   <CTableFoot>
                     <CTableRow>
-                      <CTableHeaderCell>Date : {new Date(Commande.date).toLocaleDateString('en-US', {
-                            year: 'numeric',
-                            month: '2-digit',
-                            day: '2-digit'
-                        }).split('/').reverse().join('-')}</CTableHeaderCell> 
-                      <CTableHeaderCell scope="col">Num Table : {Commande.numtable}</CTableHeaderCell>
-                      <CTableHeaderCell scope="col">Total : {Commande.prixTotal} DT</CTableHeaderCell>
+                      <CTableHeaderCell scope="col"></CTableHeaderCell>
+                      <CTableHeaderCell scope="col">Total : </CTableHeaderCell>
+                      <CTableHeaderCell scope="col">{Commande.prixTotal} DT</CTableHeaderCell>
                     </CTableRow>
                   </CTableFoot>
                 </CTable>
             </CCardBody>
+            </div>
           </CCard>
         </CCol>
       </CRow>

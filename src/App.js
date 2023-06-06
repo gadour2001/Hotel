@@ -25,11 +25,11 @@ class App extends Component {
         <Suspense fallback={loading}>
           <Routes>
             <Route exact path="login/:id" name="Login Page" element={<Login />} />
-            <Route path="register/:id" name="Register Page" element={<Register />} />
-            <Route path="/404" name="Page 404" element={<Page404 />} />
-            <Route path="/500" name="Page 500" element={<Page500 />} />
-            <Route path="/*" name="Home" element={<DefaultLayout />} />
-            <Route path="wait" name="Home" element={<Vide/>} />
+            <Route exact path="register/:id" name="Register Page" element={<Register />} />
+            <Route exact path="/404" name="Page 404" element={<Page404 />} />
+            <Route exact path="/500" name="Page 500" element={<Page500 />} />
+            <Route exact path="/*" name="Home" element={<DefaultLayout />} />
+            <Route exact path="wait" name="Home" element={<Vide/>} />
           </Routes>
         </Suspense>
       </BrowserRouter>

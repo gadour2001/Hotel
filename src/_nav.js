@@ -20,6 +20,7 @@ import {
   cilUser,
   cilHistory,
   cilHome,
+  cilAvTimer,
 } from '@coreui/icons'
 import { CNavGroup, CNavItem, CNavTitle } from '@coreui/react'
 const _navCustomer = [
@@ -32,10 +33,7 @@ const _navCustomer = [
     name: 'Home',
     to: '/home',
     icon: <CIcon icon={cilHome} customClassName="nav-icon" />,
-    badge: {
-      color: 'info',
-      text: 'NEW',
-    },
+
   },
   {
     component: CNavItem,
@@ -45,7 +43,7 @@ const _navCustomer = [
   },
   {
     component: CNavItem,
-    name: 'Profile',
+    name: 'Profil',
     to: '/profil',
     icon: <CIcon icon={cilUser} customClassName="nav-icon" />,
   },
@@ -54,6 +52,12 @@ const _navCustomer = [
     name: 'Orders',
     to: '/history',
     icon: <CIcon icon={cilClipboard} customClassName="nav-icon" />,
+  },
+  {
+    component: CNavItem,
+    name: 'Reservations',
+    to: '/reservation',
+    icon: <CIcon icon={cilAvTimer} customClassName="nav-icon" />,
   }
 ]
 const _navAdmin = [
@@ -66,10 +70,7 @@ const _navAdmin = [
     name: 'Dashboard',
     to: '/dashboardAdmin',
     icon: <CIcon icon={cilSpeedometer} customClassName="nav-icon" />,
-    badge: {
-      color: 'info',
-      text: 'NEW',
-    },
+   
   },
   {
     component: CNavItem,
@@ -82,6 +83,12 @@ const _navAdmin = [
     name: 'Managers',
     to: '/manager',
     icon: <CIcon icon={cilPeople} customClassName="nav-icon" />,
+  },
+  {
+    component: CNavItem,
+    name: 'Profil',
+    to: '/profileAdmin',
+    icon: <CIcon icon={cilUser} customClassName="nav-icon" />,
   }
 ]
 const _navServiceManager = [
@@ -97,13 +104,13 @@ const _navServiceManager = [
   },
   {
     component: CNavItem,
-    name: 'Orders',
+    name: 'Transactions',
     to: '/order',
     icon: <CIcon icon={cilClipboard} customClassName="nav-icon" />,
   },
   {
     component: CNavItem,
-    name: 'Categorys',
+    name: 'Categories',
     to: '/category',
     icon: <CIcon icon={cilListRich} customClassName="nav-icon" />,
   },
@@ -112,6 +119,12 @@ const _navServiceManager = [
     name: 'Products',
     to: '/product',
     icon: <CIcon icon={cilLayers} customClassName="nav-icon" />,
+  },
+  {
+    component: CNavItem,
+    name: 'Profil',
+    to: '/profileServiceManager',
+    icon: <CIcon icon={cilUser} customClassName="nav-icon" />,
   }
 ]
 const _navCustomerManager = [
@@ -124,15 +137,18 @@ const _navCustomerManager = [
     name: 'Dashboard',
     to: '/dashboardCustomerManager',
     icon: <CIcon icon={cilSpeedometer} customClassName="nav-icon" />,
-    badge: {
-      color: 'info',
-      text: 'NEW',
-    },
+
   },
   {
     component: CNavItem,
     name: 'Customers',
     to: '/client',
+    icon: <CIcon icon={cilPeople} customClassName="nav-icon" />,
+  },
+  {
+    component: CNavItem,
+    name: 'Profil',
+    to: '/profileCustomerManager',
     icon: <CIcon icon={cilUser} customClassName="nav-icon" />,
   },
 ]
@@ -146,10 +162,7 @@ const _nav = [
     name: 'Dashboard',
     to: '/dashboard',
     icon: <CIcon icon={cilSpeedometer} customClassName="nav-icon" />,
-    badge: {
-      color: 'info',
-      text: 'NEW',
-    },
+   
   },
   {
     component: CNavItem,
@@ -159,7 +172,7 @@ const _nav = [
   },
   {
     component: CNavItem,
-    name: 'Profile',
+    name: 'Profil',
     to: '/profileSuperAdmin',
     icon: <CIcon icon={cilUser} customClassName="nav-icon" />,
   },
@@ -346,10 +359,7 @@ const _nav = [
         component: CNavItem,
         name: 'CoreUI Free',
         to: '/icons/coreui-icons',
-        badge: {
-          color: 'success',
-          text: 'NEW',
-        },
+     
       },
       {
         component: CNavItem,
@@ -395,10 +405,6 @@ const _nav = [
     name: 'Widgets',
     to: '/widgets',
     icon: <CIcon icon={cilCalculator} customClassName="nav-icon" />,
-    badge: {
-      color: 'info',
-      text: 'NEW',
-    },
   },
   {
     component: CNavTitle,

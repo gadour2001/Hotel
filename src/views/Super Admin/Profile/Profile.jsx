@@ -57,7 +57,7 @@ const Profile = () => {
         <CCol xs={12}>
           <CCard className="mb-4">
             <CCardHeader>
-                <strong>Profile</strong>
+                <strong>Profil</strong>
             </CCardHeader>
             <CCardBody>
               <CButton onClick={() => setVisible(!visible)}>Change Password</CButton>
@@ -70,7 +70,7 @@ const Profile = () => {
             <CModalTitle>Change Password</CModalTitle>
           </CModalHeader>
           <CModalBody>
-          <CCol md={4}>
+          <CCol md={12}>
             <CFormLabel htmlFor="validationCustom05">Old Password</CFormLabel>
             <CFormInput 
               type="password" 
@@ -80,7 +80,7 @@ const Profile = () => {
               required 
             />
           </CCol>
-          <CCol md={4}>
+          <CCol md={12}>
             <CFormLabel htmlFor="validationCustom05">New Password</CFormLabel>
             <CFormInput 
               type="password" 
@@ -90,8 +90,8 @@ const Profile = () => {
               required 
             />
           </CCol>
-          <CCol md={4}>
-            <CFormLabel htmlFor="validationCustom05">Confirm Password</CFormLabel>
+          <CCol md={12}>
+            <CFormLabel htmlFor="validationCustom05">Confirm New Password</CFormLabel>
             <CFormInput 
               type="password" 
               id="validationCustom07" 

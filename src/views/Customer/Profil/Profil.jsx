@@ -28,6 +28,9 @@ import {
 } from '@coreui/react'
 import Swal from 'sweetalert2'
 import { useNavigate } from 'react-router-dom'
+import CIcon from '@coreui/icons-react'
+import logouser from 'src/assets/images/user.png'
+import { cilLockLocked } from '@coreui/icons'
 
 const UPDATE_CUSTOMER_URL = '/client/put/'
 const GET_CUSTOMER_URL = '/user/get/'
@@ -114,23 +117,26 @@ const Profil = () => {
   },[])
 
   return (
-    <>
-      <CRow>
-        <CCol xs={12}>
-          <CCard className="mb-4">
+    <div style={{textAlign: '-webkit-center'}}  >
+      <CRow className='col-xl-6 col-xs-12'   >
+        <CCol xs={12} >
+          <CCard className="mb-4"  style={{textAlign: 'initial'}}>
             <CCardHeader>
-                <strong>Profile</strong>
+                <strong>Profil</strong>
+                <div className="d-grid gap-2 d-md-flex justify-content-md-end">
+                  <h5 className='col-xl-4 col-xs-12'>Balance : {sold} DT</h5>
+                </div>
             </CCardHeader>
             <CCardBody>
-              <h2>{sold} DT</h2>
               <CForm
-                className="row g-4 needs-validation"
+                className="row needs-validation"
                 noValidate
                 validated={validated}
                 onSubmit={handleSubmitCustomer}
               >
-                <CButton onClick={() => setVisible(!visible)}>Change Password</CButton>
-                <CCol md={4}>
+              <img src={logouser} alt='user' style={{height:'55px' , width:'65px' , border:'solid 1px gray' , borderRadius:'50%' , padding:'10px' ,marginLeft: '45%'}}/>
+              <div className='col-1'></div>
+                <CCol className='col-12 '>
                     <CFormLabel htmlFor="validationCustom01">Username</CFormLabel>
                     <CFormInput 
                       type="text" 
@@ -138,19 +144,19 @@ const Profil = () => {
                       defaultValue={username} 
                       onChange={(e) => setUsername(e.target.value)}
                       required />
-                    <CFormFeedback invalid>Please choose a Username.</CFormFeedback>
+                    <CFormFeedback invalid>Please enter a Username.</CFormFeedback>
                 </CCol>
-                <CCol md={4}>
+                <CCol className='col-6 '>
                     <CFormLabel htmlFor="validationCustom02">Email</CFormLabel>
                     <CFormInput 
                       type="email" 
                       id="validationCustom02" 
                       defaultValue={email} 
                       onChange={(e) => setEmail(e.target.value)}
-                      disabled />
-                    <CFormFeedback invalid>Please choose an Email.</CFormFeedback>
+                      disabled />              
+                      <CButton className='col-xl-6  col-xs-12 ' style={{position:'absolute' , right:'10px', marginTop:'-40px'}} onClick={() => setVisible(!visible)}><CIcon icon={cilLockLocked} /> Change Password</CButton>
                 </CCol>
-                <CCol md={4}>
+                <CCol className='col-12 '>
                     <CFormLabel htmlFor="validationCustom04">Date of Birth</CFormLabel>
                     <CFormInput 
                       type="date" 
@@ -158,21 +164,21 @@ const Profil = () => {
                       defaultValue={date} 
                       onChange={(e) => setDate(e.target.value)}
                       required />
-                    <CFormFeedback invalid>Please choose a Date.</CFormFeedback>
+                    <CFormFeedback invalid>Please enter a Date of Birth.</CFormFeedback>
                 </CCol>
-                <CCol md={4}>
-                    <CFormLabel htmlFor="validationCustom05">Passport/Cin</CFormLabel>
+                <CCol className='col-12 '>
+                    <CFormLabel htmlFor="validationCustom05">Passport ID / ID</CFormLabel>
                     <CFormInput 
                       type="text" 
                       id="validationCustom05" 
                       defaultValue={passport}
                       onChange={(e) => setPassport(e.target.value)}
                       required />
-                    <CFormFeedback invalid>Please choose a Passport Number or Cin.</CFormFeedback>
+                    <CFormFeedback invalid>Please enter a Passport ID / ID.</CFormFeedback>
                 </CCol>
                 <CCol xs={12}>
-                    <CButton color="primary" type="submit">
-                    Updated
+                    <CButton color="primary" type="submit" className='mt-3' style={{float:'right'}}>
+                    Update
                     </CButton>
                 </CCol>
               </CForm>
@@ -185,7 +191,7 @@ const Profil = () => {
             <CModalTitle>Change Password</CModalTitle>
           </CModalHeader>
           <CModalBody>
-          <CCol md={4}>
+          <CCol md={12}>
             <CFormLabel htmlFor="validationCustom05">Old Password</CFormLabel>
             <CFormInput 
               type="password" 
@@ -195,7 +201,7 @@ const Profil = () => {
               required 
             />
           </CCol>
-          <CCol md={4}>
+          <CCol md={12}>
             <CFormLabel htmlFor="validationCustom05">New Password</CFormLabel>
             <CFormInput 
               type="password" 
@@ -205,8 +211,8 @@ const Profil = () => {
               required 
             />
           </CCol>
-          <CCol md={4}>
-            <CFormLabel htmlFor="validationCustom05">Confirm Password</CFormLabel>
+          <CCol md={12}>
+            <CFormLabel htmlFor="validationCustom05">Confirm New Password</CFormLabel>
             <CFormInput 
               type="password" 
               id="validationCustom07" 
@@ -223,7 +229,7 @@ const Profil = () => {
             <CButton color="primary" onClick={() => EditPassword()}>Save changes</CButton>
           </CModalFooter>
         </CModal>
-    </>
+    </div>
   )
 }
 

@@ -30,6 +30,8 @@ const LOGIN_URL = '/user/login'
 const UPDATE_CUSTOM_LOG_URL = '/client/putlog/'
 const RESET_PASSWORD_URL = '/user/forgotPassword'
 const UPDATE_CUSTOM_IDRESPO_URL = '/client/putidRespo/'
+const GET_ALL_CLIENTS_URL = '/client/'
+const UPDATE_CUSTOM_STATUS_URL = '/client/put/status/'
 
 const Login = () => {
 
@@ -47,54 +49,84 @@ const Login = () => {
 
   const handleLogin = (e) => {
     e.preventDefault()
+
     setLoading(true)
     axiosApi.post(LOGIN_URL,{ email:email, password:password }).then((res) => {
-      localStorage.setItem('user',JSON.stringify(res))
-      if (res.user.payload.user.role === 'superAdmin') {navigate("/dashboardSuperAdmin")}
-      else if(res.user.payload.user.role === 'responsableClient'){navigate("/dashboardCustomerManager")}
-      else if(res.user.payload.user.role === 'client'){
-        if(res.user.payload.user.isActive === false){
-          if(id == '0'){
-            Swal.fire(
-              'Updated!',
-              'Please scanne QR Code',
-              'error'
-            )
-          }
-          else{
-            if(res.user.payload.user.idResponsableClient == id){
-              axiosApi.edit(UPDATE_CUSTOM_LOG_URL,res.user.payload.user._id).then(() => {
-                socket.emit("add_Custom")
-                navigate('/wait')
-              }).catch((err) => console.log(err))
-            }else{
-              axiosApi.edit(UPDATE_CUSTOM_IDRESPO_URL,res.user.payload.user._id, { idResponsable : id}).then(() => {
-                socket.emit("add_Custom")
-                navigate('/wait')
-              }).catch((err) => console.log(err))
+      if(res.error)
+      {
+        setMessage(res.error)
+      }else{
+        localStorage.setItem('user',JSON.stringify(res))
+        if (res.user.payload.user.role === 'superAdmin') {navigate("/dashboardSuperAdmin")}
+        else if(res.user.payload.user.role === 'responsableClient'){navigate("/dashboardCustomerManager")}
+        else if(res.user.payload.user.role === 'client'){
+          if(res.user.payload.user.isActive === false){
+            if(id == '0'){
+              localStorage.clear()
+              Swal.fire(
+                'Please scan QR Code',
+                '',
+                'error'
+              )
+            }
+            else{
+              if(res.user.payload.user.idResponsableClient == id){
+                axiosApi.edit(UPDATE_CUSTOM_LOG_URL,res.user.payload.user._id).then(() => {
+                  socket.emit("add_Custom")
+                  navigate('/wait')
+                }).catch((err) => console.log(err))
+              }else{
+                axiosApi.edit(UPDATE_CUSTOM_IDRESPO_URL,res.user.payload.user._id, { idResponsable : id}).then((res) => {
+                  console.log(res);
+                  socket.emit("add_Custom")
+                  navigate('/wait')
+                }).catch((err) => console.log(err))
+              }
             }
           }
+          else{navigate('/home')}
         }
-        else{navigate('/home')}
+        else if(res.user.payload.user.role === 'responsableService'){navigate("/dashboardServiceManager")} 
+        else if(res.user.payload.user.role === 'admin') {navigate("/dashboardAdmin")}
       }
-      else if(res.user.payload.user.role === 'responsableService'){navigate("/dashboardServiceManager")} 
-      else if(res.user.payload.user.role === 'admin') {navigate("/dashboardAdmin")}
+      
     }).catch((err) => {
-        setMessage('login failed')
+      console.log(err);
     })
     setLoading(false)
   }
 
-  const ForgotPassword  = () => {
+  const ForgotPassword  = (e) => {
+    e.preventDefault()
     axiosApi.post(RESET_PASSWORD_URL,{email : email_forget})
     .then((res) => {
+      Swal.fire(
+        'Email sent!',
+        '',
+        'success'
+      )
       setVisible(false)
     }).catch((err) => console.log(err))
   }
 
   const user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')).user.payload.user : null;
-
+  
+  
   useEffect(()=>{
+    // axiosApi.get(GET_ALL_CLIENTS_URL)
+    //   .then((res) => {
+    //     console.log(res);
+    //     for (let i = 0; i < res.length; i++) {
+    //       let date=new Date(res[i].dateEntre)
+    //       date.setDate(date.getDate()+res[i].nbrJour)
+    //       if (date<=Date.now() && res[i].isActive) {
+    //         axiosApi.put(UPDATE_CUSTOM_STATUS_URL , res[i]._id , {isActive: false})
+    //         .then(() => { console.log('Custom status updated successfully.')
+    //         }).catch((error) => console.error('Error updating service status:', error))
+            
+    //       }
+    //     }
+    //   }).catch((err) => console.log(err))
     if(user){
       switch (user.role) {
         case 'client':
@@ -129,13 +161,20 @@ const Login = () => {
     <div className="bg-light min-vh-100 d-flex flex-row align-items-center">
       <CContainer>
         <CRow className="justify-content-center">
-          <CCol md={8}>
+          <CCol md={10}>
             <CCardGroup>
               <CCard className="p-4">
                 <CCardBody>
                   <CForm onSubmit={handleLogin}>
                     <h1>Login</h1>
                     <p className="text-medium-emphasis">Sign In to your account</p>
+                    {message !== '' ? (
+                        <div className="form-group mt-2">
+                          <div className="alert alert-danger" role="alert">
+                            {message}
+                          </div>
+                        </div>
+                      ) : ""}
                     <CInputGroup className="mb-3">
                       <CInputGroupText>
                         <CIcon icon={cilUser} />
@@ -169,29 +208,22 @@ const Login = () => {
                         </CButton>
                       </CCol>
                       <CCol xs={6} className="text-right">
-                        <CButton color="link" className="px-0" onClick={() => setVisible(true)}>
+                        <CButton color="link" className="px-0" onClick={() => setVisible(true)} style={{ color: 'blue' }}>
                           Forgot password?
                         </CButton>
                       </CCol>
-                      {message !== '' ? (
-                        <div className="form-group">
-                          <div className="alert alert-danger" role="alert">
-                            {message}
-                          </div>
-                        </div>
-                      ) : ""}
+                    
                     </CRow>
                   </CForm>
                 </CCardBody>
               </CCard>
-              <CCard className="text-white bg-primary py-5" style={{ width: '44%' }}>
+              <CCard className="text-white bg-primary py-5">
                 <CCardBody className="text-center">
                   <div>
+                  <img src='/logo.png' alt='logo' className='pb-4' width={150}/>
+
                     <h2>Sign up</h2>
-                    <p>
-                      Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                      tempor incididunt ut labore et dolore magna aliqua.
-                    </p>
+                    <p>Welcome to our customer authentification site at our hotel. Please log in to access your account or create a new account if you are a new customer</p>
                     <Link to={`/register/${id}`}>
                       <CButton color="primary" className="mt-3" active tabIndex={-1}>
                         Register Now!
@@ -212,7 +244,7 @@ const Login = () => {
           <CModalBody>
             <CInputGroup>
             <CFormInput 
-              type="email" 
+              type="email"
               id="validationCustom05" 
               placeholder='example@gmail.com'
               onChange={(e) => setEmail_forget(e.target.value)}
@@ -224,7 +256,7 @@ const Login = () => {
             <CButton color="secondary" onClick={() => setVisible(false)}>
               Close
             </CButton>
-            <CButton color="primary" onClick={() => ForgotPassword()} >Search</CButton>
+            <CButton color="primary" type='submit' onClick={(e) => ForgotPassword(e)} >Confirm</CButton>
           </CModalFooter>
         </CModal>
     </div>

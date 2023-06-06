@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import React, { useState, useEffect ,useContext } from 'react';
+import { useNavigate, useParams , Link } from 'react-router-dom';
 import * as axiosApi from 'src/api/axiosApi';
+import { Context } from 'src/components/context/contextProvider'
 import {
   CCard,
   CCardFooter,
@@ -40,13 +41,12 @@ const GET_PRODUCT_URL = '/product/get/'
 const ProductCustomer = () => {
   const { id } = useParams();
   const navigate = useNavigate()
-  const [visible, setVisible] = useState(false)
 
   const [categorys, setCategorys] = useState([]);
   const [products, setProducts] = useState([]);
-  const [product, setProduct] = useState({});
-  const [cart, setCart] = useState([]);
 
+  const {changeData} = useContext(Context)
+  
   useEffect(() => {
     if(localStorage.getItem('user')){
     const get_Category_Service = (id) => {
@@ -61,10 +61,7 @@ const ProductCustomer = () => {
   const Client = localStorage.getItem("user")?JSON.parse(localStorage.getItem("user")).user.payload.user:null
   useEffect(() => {
     if(localStorage.getItem('user')){
-      if(Client.isActive == false)
-      {
-        navigate('/wait')
-      }else{
+        changeData(localStorage.length - 1)
         const get_Product_Category = () => {
           axiosApi
             .get(GET_PRODUCTS_BY_CATEGORY_URL)
@@ -72,26 +69,10 @@ const ProductCustomer = () => {
             .catch((err) => console.log(err))
         }
         get_Product_Category()
-      }
     }
   },[])
-  // const get_Product = async (id) => {
-  //   await axiosApi
-  //     .getBYID(GET_PRODUCT_URL,id)
-  //     .then((res) => setProduct(res))
-  //     .catch((err) => console.log(err))
-  // }
-  // useEffect(() => {
-  //   const productsInCart = []
-  //   for (let i = 0; i < localStorage.length; i++) {
-  //     const key = localStorage.key(i)
-  //     if (key.startsWith('product_')) {
-  //       const product = JSON.parse(localStorage.getItem(key))
-  //       productsInCart.push(product);
-  //     }
-  //   }
-  //   setCart(productsInCart)
-  // }, []);
+
+  
 
   const addtoCard = (product, Quant) => {
     const Toast = Swal.mixin({
@@ -101,9 +82,8 @@ const ProductCustomer = () => {
       timer: 3000,
       timerProgressBar: true,
     });
-  
+    
     const cartItem = localStorage.getItem(`product_${product._id}`);
-    // const existingCart = JSON.parse(localStorage.getItem('cart')) || [];
   
     if (cartItem) {
       const cartProduct = JSON.parse(cartItem);
@@ -137,10 +117,7 @@ const ProductCustomer = () => {
         title: 'Added to cart',
       });
     }
-  
-    // Update the cart state
-    // const updatedCart = [...existingCart, product];
-    // localStorage.setItem('cart', JSON.stringify(updatedCart));
+    changeData(localStorage.length - 1)
   };
 
   return (
@@ -149,36 +126,50 @@ const ProductCustomer = () => {
         <CCol xs>
           <CCard className="mb-12">
             <CCardHeader>
-              <strong>Category</strong>
+              <strong>Products</strong>
             </CCardHeader>
             <CCardBody>
-              <CRow xs={{ cols: 1, gutter: 4 }} xl={{ cols: 3 }} md={{ cols: 2 }}>
+              <div >
                 {categorys.length > 0 ? (
                   categorys.map((category) => (
-                    <CCol xs key={category._id}>
-                      <CCard>
+                    <div  key={category._id}>
+                      <div style={{position:'relative'}} >
                         <img orientation="top" src={category.image} alt={category.name} style={{position:'absolute',right:'20px',top:'10px'}} height={70}/>
-                        <CCardBody>
+                        <div className='row card-body' style={{border:'1px solid #d8dbe0',borderRadius:'20px',margin:'10px'}} >
                           <CCardTitle>{category.name}</CCardTitle>
                           <CCardText>{category.description}</CCardText>
                           {products
                             .filter((product) => product.idCategorie  === category._id)
                             .map((product) => (
-                              <CCardBody key={product._id} >
-                                <CCardTitle>{product.name}</CCardTitle>
-                                <CCardText>{product.description}</CCardText>
-                                {product.quantity === 0 ? (<CButton color='danger' disabled>Unavailable</CButton>)
-                                 : (<CButton onClick={() => addtoCard(product,product.quantity)}  >Add to Card</CButton>)}
-                              </CCardBody>
+                              
+                              <div className='text-center min-height-3 col-xl-3 col-md-6	col-lg-4 col-sm-12 my-2' style={{display: 'flex',flexDirection: 'column',alignSelf: 'end'}} key={product._id} >
+                              {product.__t === 'materialProduct' ? (
+                                <div >
+                                  <CCardTitle>{product.name}</CCardTitle>
+                                  <CCardTitle>{product.prix} DT</CCardTitle>
+                                  <CCardText>{product.description}</CCardText>
+                                  {product.quantity == 0 ? (<CButton color='danger' style={{width: '100%'}} disabled>Out of Stock</CButton>)
+                                  : (<CButton style={{width: '100%'}} onClick={() => addtoCard(product,product.quantity)}>Add to Card</CButton>)}
+                                </div>
+                              ) : (
+                                <div >
+                                  <CCardTitle>{product.name}</CCardTitle>
+                                  <CCardText>{product.description}</CCardText>
+                                  <CCardTitle>{product.prix}</CCardTitle>
+                                  <Link  to={`/serviceCustomer/productCustomer/itemPage/${id}/${product._id}`}><CButton style={{width: '100%'}}>Book Service</CButton></Link>
+                                </div>
+                              )}
+                                
+                              </div>
                             ))}
-                        </CCardBody>
-                      </CCard>
-                    </CCol>
+                        </div>
+                      </div>
+                    </div>
                   ))
                 ) : (
                   <CCol>No data found</CCol>
                 )}
-              </CRow>
+              </div>
             </CCardBody>
           </CCard>
         </CCol>

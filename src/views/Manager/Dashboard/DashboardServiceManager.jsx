@@ -18,6 +18,7 @@ import {
   CTableHeaderCell,
   CTableRow,
   CBadge,
+  CWidgetStatsC,
 } from '@coreui/react'
 import { CChartLine } from '@coreui/react-chartjs'
 import { getStyle, hexToRgba } from '@coreui/utils'
@@ -43,6 +44,10 @@ import {
   cilPeople,
   cilUser,
   cilUserFemale,
+  cilChartPie,
+  cilSpeedometer,
+  cilBasket,
+  cilUserFollow,
 } from '@coreui/icons'
 import WidgetsDropdown from '../../widgets/WidgetsDropdown'
 import * as axiosApi from 'src/api/axiosApi' 
@@ -53,9 +58,15 @@ const socket = io.connect("http://localhost:5001");
 const GET_ORDER_URL = '/commande/get/Service/'
 const UPDATE_COMMANDE_STATUS = '/commande/update/status/'
 
+const GET_RESERVATION_URL = '/reservation/get/Service/'
+const UPDATE_RESERVATION_STATUS = '/reservation/update/status/'
+
+
 
 const DashboardServiceManager = () => {
     const [orders, setOrders] = useState([])
+    const [date , setDate] = useState(new Date().toISOString().split('T')[0])
+    const [reservations, setReservations] = useState([])
     const idService = localStorage.getItem('user')?JSON.parse(localStorage.getItem('user')).user.payload.user.idService:null
 
     const get_Order = (id) => {
@@ -85,28 +96,66 @@ const DashboardServiceManager = () => {
         get_Order(idService)
       });
     }, [socket]);
+
+    const get_Reservation = (id) => {
+      axiosApi.getBYID(GET_RESERVATION_URL , id)
+      .then((res) => setReservations(res))
+      .catch((err) => console.log(err))
+    }
+
+    useEffect(() => {
+      if(localStorage.getItem('user')){
+        get_Reservation(idService)
+      }
+    },[])
+    useEffect(() => {
+      socket.on("add_Reservation", () => {
+        get_Reservation(idService)
+      });
+    }, [socket]);
+    useEffect(() => {
+      socket.on("Edit_Reservation", () => {
+        get_Reservation(idService)
+      });
+    }, [socket]);
+    // useEffect(() => {
+    //   axiosApi.getBYID(GET_RESERVATION_URL,id)
+    //   .then((res) => {
+    //     console.log(res);
+    //     for (let i = 0; i < res.length; i++) {
+    //       let date=new Date(res[i].horaire)
+    //       date.setDate(date.getDate()+res[i].nbrJour)
+    //       if (date<=Date.now() && res[i].isActive) {
+    //         axiosApi.put(UPDATE_CUSTOM_STATUS_URL , res[i]._id , {isActive: false})
+    //         .then(() => { console.log('Custom status updated successfully.')
+    //         }).catch((error) => console.error('Error updating service status:', error))
+    //       }
+    //     }
+    //   }).catch((err) => console.log(err))
+    // },[])
   return (
     <>
-      <WidgetsDropdown />
       <CRow>
         <CCol xs={12}>
+        {orders.length > 0 ? (
           <CCard className="mb-4">
             <CCardHeader>
                 <strong>Orders</strong>
             </CCardHeader>
             <CCardBody>
-                <CTable>
+              
+                 <CTable>
                   <CTableHead>
                     <CTableRow>
                       <CTableHeaderCell scope="col">Date</CTableHeaderCell>
                       <CTableHeaderCell scope="col">Price</CTableHeaderCell>
-                      <CTableHeaderCell scope="col">N table</CTableHeaderCell>
+                      <CTableHeaderCell scope="col">Table N°</CTableHeaderCell>
                       <CTableHeaderCell scope="col">Status</CTableHeaderCell>   
                       <CTableHeaderCell scope="col">Details</CTableHeaderCell>   
                     </CTableRow>
                   </CTableHead>
                   <CTableBody>
-                    {orders.length > 0 ?orders.map((order) => 
+                    {orders.map((order) => 
                     <CTableRow key={order._id} className={ order.etat === 'en attente' ? "table-warning" : "table-success"}>
                       <CTableDataCell>{order.date}</CTableDataCell>
                       <CTableDataCell>{order.prixTotal} DT</CTableDataCell>
@@ -117,11 +166,61 @@ const DashboardServiceManager = () => {
                       }</CTableDataCell>
                       <CTableDataCell><Link to={`/editOrder/${order._id}`}><CButton color="info">Details</CButton></Link></CTableDataCell>
                     </CTableRow>
-                    ): <CTableRow><CTableDataCell>Not Data Found</CTableDataCell></CTableRow>}
+                    )}
                   </CTableBody>
                 </CTable>
             </CCardBody>
           </CCard>
+        ) :("")}
+        {reservations.length > 0 ? (
+          <CCard className="mb-4">
+            <CCardHeader>
+              <div className='row'>
+                  <h2 className="col-6" >Reservation</h2>
+                <div className="col-6 "style={{ placeSelf: 'end',textAlign: '-webkit-right'}}>
+                <input
+                  type="date"
+                  className='form-control p-2'
+                  value={date}
+                  min={new Date().toISOString().split('T')[0]}
+                  onChange={(e) => {setDate(e.target.value)}}
+                  style={{width:'200px'}}
+                />
+                </div>
+              </div>
+            </CCardHeader>
+            <CCardBody>
+                <CTable striped>
+                  <CTableHead>
+                    <CTableRow>
+                      <CTableHeaderCell scope="col">Date</CTableHeaderCell>
+                      <CTableHeaderCell scope="col">Time</CTableHeaderCell>
+                      <CTableHeaderCell scope="col">Product</CTableHeaderCell>
+                      <CTableHeaderCell scope="col">Price</CTableHeaderCell>
+                      <CTableHeaderCell scope="col">Places Number</CTableHeaderCell>
+                      <CTableHeaderCell scope="col">Status</CTableHeaderCell>
+                    </CTableRow>
+                  </CTableHead>
+                  <CTableBody>
+                    {reservations.map((reservation) => 
+                    <CTableRow key={reservation._id}>
+                      <CTableDataCell>{new Date(reservation.date).toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: '2-digit',
+                            day: '2-digit'
+                        }).split('/').reverse().join('-')}</CTableDataCell>
+                      <CTableDataCell>{new Date(reservation.horaire).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' , hour12: false})}</CTableDataCell>
+                      <CTableDataCell>{reservation.idServiceProduct}</CTableDataCell>
+                      <CTableDataCell>{reservation.prixTotal} DT</CTableDataCell>
+                      <CTableDataCell>{reservation.nbPlace}</CTableDataCell>
+                      <CTableDataCell><CBadge color="info">Pending</CBadge></CTableDataCell>
+                    </CTableRow>
+                    )}
+                  </CTableBody>
+                </CTable>
+              </CCardBody>
+            </CCard>
+          ) :("")}
         </CCol>
       </CRow>
     </>

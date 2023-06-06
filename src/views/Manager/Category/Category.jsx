@@ -10,7 +10,6 @@ import {
     CRow,
     CTable,
     CTableBody,
-    CTableCaption,
     CTableDataCell,
     CTableHead,
     CTableHeaderCell,
@@ -91,13 +90,15 @@ const Category = () => {
         <CCol xs={12}>
           <CCard className="mb-4">
             <CCardHeader>
-                <strong>Categorys</strong>
-              <div className="d-grid gap-2 d-md-flex justify-content-md-end">
-                <Link to={'/category/addCategory/0'}><CButton color="info">Add Category</CButton></Link>
+              <div className='row'>
+                  <h2 className="col-6" >Category</h2>
+                <div className="col-6 "style={{textAlign:'end'}}>
+                  <Link to={'/category/addCategory/0'}><CButton color="info">Add Category</CButton></Link>
+                </div>
               </div>
             </CCardHeader>
             <CCardBody>
-                <CTable>
+                <CTable striped>
                   <CTableHead>
                     <CTableRow>
                       <CTableHeaderCell scope="col">Image</CTableHeaderCell>
@@ -114,7 +115,7 @@ const Category = () => {
                       <CTableDataCell><Link to={`/category/addCategory/${category._id}`}><CButton color="warning">Update</CButton></Link></CTableDataCell>
                       <CTableDataCell><CButton color="danger" onClick={() => handleDelete(category._id)}>Delete</CButton></CTableDataCell>
                     </CTableRow>
-                    ): <CTableRow><CTableDataCell>Not Data Found</CTableDataCell></CTableRow>}
+                    ): <CTableRow><CTableDataCell colSpan={4} style={{textAlign:'center'}}>Data Not Found</CTableDataCell></CTableRow>}
                   </CTableBody>
                 </CTable>
             </CCardBody>

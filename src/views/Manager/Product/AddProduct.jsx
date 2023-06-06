@@ -32,7 +32,7 @@ const GET_CATEGORYS_BY_SERVICE_URL = '/category/getCtegorys/'
 const GET_CATEGORY_URL = '/category/get/'
 const GET_PRODUCT_URL = '/product/get/'
 
-const ADD_SERVICE_PRODUCT_URL = '/'
+const ADD_SERVICE_PRODUCT_URL = '/serviceProduct/post'
 const UPDATE_SERVICE_PRODUCT_URL = '/'
 
 
@@ -119,6 +119,8 @@ const AddProduct = () => {
           )
         })
       }else{
+        
+        event.preventDefault();
         axiosApi.put(UPDATE_MATERIAL_PRODUCT_URL, idProduct , {
           name:product_name,
           description:product_description,
@@ -247,7 +249,7 @@ const AddProduct = () => {
       </CCol>
       <CCol xs={12}>
         <CButton color="primary" type="submit">
-          {idProduct === '0' ? "Add Physical Product" : "Update Physical Product"}
+          {idProduct === '0' ? "Add Consumable Product" : "Update Consumable Product"}
         </CButton>
       </CCol>
     </CForm>   
@@ -384,7 +386,7 @@ const AddProduct = () => {
           defaultValue={base64Image}
           onChange={(e) => handleImageChange(e)}
         />
-        <CFormFeedback invalid>Please choose a Image.</CFormFeedback>
+        <CFormFeedback invalid>Please choose an Image.</CFormFeedback>
     </CCol>
     <CCol md={4}>
         <CFormLabel htmlFor="validationCustom03">Duration</CFormLabel>
@@ -398,7 +400,7 @@ const AddProduct = () => {
         <CFormFeedback invalid>Please choose a Duration.</CFormFeedback>
     </CCol>
     <CCol md={4}>
-        <CFormLabel htmlFor="validationCustom03">Nbr Places</CFormLabel>
+        <CFormLabel htmlFor="validationCustom03">Places Number</CFormLabel>
         <CFormInput 
           type="number" 
           id="validationCustom03" 
@@ -406,7 +408,7 @@ const AddProduct = () => {
           onChange={(e) => setProduct_nbrPlaces(e.target.value)}
           required 
         />
-        <CFormFeedback invalid>Please choose a Nbr Places.</CFormFeedback>
+        <CFormFeedback invalid>Please choose a Places Number.</CFormFeedback>
     </CCol>
     <CCol md={4}>
       <CFormLabel htmlFor="validationCustom06">Category</CFormLabel>
@@ -471,7 +473,7 @@ const AddProduct = () => {
                     <CNavItem>
                       <CNavLink active={activeForm === 'material'} onClick={() => handleNavClick('material')} >
                         <CIcon icon={cilMediaPlay} className="me-2" />
-                        Physical Product
+                        Consumable Product
                       </CNavLink>
                     </CNavItem>
                     <CNavItem>
@@ -487,7 +489,7 @@ const AddProduct = () => {
                       <CNavItem>
                         <CNavLink active={activeForm === 'material'} onClick={() => handleNavClick('material')} >
                           <CIcon icon={cilMediaPlay} className="me-2" />
-                          Physical Product
+                          Consumable Product
                         </CNavLink>
                       </CNavItem>
                       <CNavItem>
@@ -502,7 +504,7 @@ const AddProduct = () => {
                       <CNavItem>
                         <CNavLink active={activeForm === 'material'} onClick={() => handleNavClick('material')} disabled>
                           <CIcon icon={cilMediaPlay} className="me-2" />
-                          Physical Product
+                          Consumable Product
                         </CNavLink>
                       </CNavItem>
                       <CNavItem>

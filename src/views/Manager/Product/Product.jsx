@@ -120,28 +120,30 @@ const Product = () => {
       <CCol xs={12}>
         <CCard className="mb-4">
           <CCardHeader>
-            <strong>Products</strong>
-            <div className="d-grid gap-2 d-md-flex justify-content-md-end">
+            <div className='row'>
+                  <h2 className="col-6" >Product</h2>
+                <div className="col-6 "style={{textAlign:'end'}}>
                 <Link to={'/product/addProduct/0/0'}><CButton color="info">Add Product</CButton></Link>
+            </div>
             </div>
           </CCardHeader>
           <CCardBody>
             <p className="text-medium-emphasis small">
-                Click the category below to expand the products.
+                Click the category below to show the products.
             </p>
                <CAccordion>{/* activeItemKey={'6470c277434676e323871bab'} */}
                 {categorys.length > 0 ? categorys.map((category) => (
-                <CAccordionItem itemKey={category._id} key={category._id} onClick={() => get_Products_Category(category._id)} activeItemKey={category._id}>
+                <CAccordionItem itemKey={category._id} key={category._id} onClick={() => get_Products_Category(category._id)} >
                   <CAccordionHeader>{category.name}</CAccordionHeader>
                   <CAccordionBody>
-                    <CTable>
+                    <CTable striped>
                     <CTableHead>
                       <CTableRow>
                         <CTableHeaderCell scope="col">Image</CTableHeaderCell>
                         <CTableHeaderCell scope="col">Name</CTableHeaderCell>
                         <CTableHeaderCell scope="col">Price</CTableHeaderCell>
                         <CTableHeaderCell scope="col">Quantity</CTableHeaderCell>
-                        <CTableHeaderCell scope="col">Type</CTableHeaderCell>
+                        <CTableHeaderCell scope="col">Type of Product</CTableHeaderCell>
                         <CTableHeaderCell scope="col">Update</CTableHeaderCell>
                         <CTableHeaderCell scope="col">Delete</CTableHeaderCell>
                         <CTableHeaderCell scope="col"><Link to={`/product/addProduct/0/${category._id}`}><CButton color="info">Add Product</CButton></Link></CTableHeaderCell>
@@ -153,13 +155,13 @@ const Product = () => {
                         <CTableDataCell><img style={{width:70+'px'}} src={product.image} alt={product.name} /></CTableDataCell>
                         <CTableDataCell>{product.name}</CTableDataCell>
                         <CTableDataCell>{product.prix} DT</CTableDataCell>
-                        <CTableDataCell>{product.quantity}</CTableDataCell>
-                        <CTableDataCell>{product.__t === 'materialProduct' ? "Material Product" : "Physical Product"}</CTableDataCell>
+                        <CTableDataCell>{product.quantity == -1 ? "unlimited" : product.quantity}</CTableDataCell>
+                        <CTableDataCell>{product.__t === 'materialProduct' ? "Consumable" : "Service"}</CTableDataCell>
                         <CTableDataCell><Link to={`/product/addProduct/${product._id}/${category._id}`}><CButton color="warning">Update</CButton></Link></CTableDataCell>
                         <CTableDataCell><CButton color="danger" onClick={() => handleDelete(product._id)}>Delete</CButton></CTableDataCell>
-                        {product.quantity === -1 ? "" : (<CTableDataCell><CButton color="success" onClick={() => handleStock(product._id,category._id)}>Add Quantity</CButton></CTableDataCell>)}
+                        {product.quantity === -1 ? (<CTableDataCell></CTableDataCell>) : (<CTableDataCell><CButton color="success" onClick={() => handleStock(product._id,category._id)}>Add Quantity</CButton></CTableDataCell>)}
                       </CTableRow>
-                      )) : <CTableRow><CTableDataCell>Not Data Found</CTableDataCell></CTableRow>}
+                      )) : <CTableRow><CTableDataCell  colSpan={8} style={{textAlign:'center'}}>Data Not Found</CTableDataCell></CTableRow>}
                     </CTableBody>
                   </CTable>
                   </CAccordionBody>

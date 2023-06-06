@@ -6,11 +6,13 @@ const socket = io.connect("http://localhost:5001")
 
 const PageVide = () => {
   const navigate = useNavigate()
+  let user = localStorage.getItem("user")?JSON.parse(localStorage.getItem("user")):null
 
   useEffect(() => {
-    
     socket.on("valide_Custom", () => {
       navigate('/home')
+      user.user.payload.user.isActive = true;
+      localStorage.setItem("user", JSON.stringify(user))
     })
   }, [socket])
   

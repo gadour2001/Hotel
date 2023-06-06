@@ -15,3 +15,11 @@ $enable-rtl: true;
 
 // If you want to add custom CSS you can put it here.
 @import 'custom';
+.href{
+    color: black !important;
+    text-decoration: none !important;
+}
+.btn{
+    --cui-btn-color: white !important;
+    --cui-btn-hover-color: white!important;
+}

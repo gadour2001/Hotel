@@ -20,7 +20,7 @@ import * as axiosApi from '../../../api/axiosApi'
 import { Link } from 'react-router-dom'
 
 const DELETE_ORDER_URL = '/commande/delete/'
-const GET_ORDER_FINI_URL = '/commande/get/Servicefini/'
+const GET_ORDER_FINI_URL = '/commande/get/Servicefini/' 
 
 const Order = () => {
   
@@ -90,7 +90,7 @@ const Order = () => {
                     <CTableRow>
                       <CTableHeaderCell scope="col">Date</CTableHeaderCell>
                       <CTableHeaderCell scope="col">Total</CTableHeaderCell>
-                      <CTableHeaderCell scope="col">N table</CTableHeaderCell>
+                      <CTableHeaderCell scope="col">Table N°</CTableHeaderCell>
                       <CTableHeaderCell scope="col">Status</CTableHeaderCell>
                       <CTableHeaderCell scope="col">Delete</CTableHeaderCell>
                       <CTableHeaderCell scope="col">Details</CTableHeaderCell>
@@ -109,7 +109,7 @@ const Order = () => {
                       <CTableDataCell><CButton color="danger" onClick={() => handleDelete(order._id)}>Delete</CButton></CTableDataCell>
                       <CTableDataCell><Link to={`/editOrder/${order._id}`}><CButton color="info">Details</CButton></Link></CTableDataCell>
                     </CTableRow>
-                    ): <CTableRow><CTableDataCell>Not Data Found</CTableDataCell></CTableRow>}
+                    ): <CTableRow><CTableDataCell  colSpan={6} style={{textAlign:'center'}}>Data Not Found</CTableDataCell></CTableRow>}
                   </CTableBody>
                 </CTable>
             </CCardBody>

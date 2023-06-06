@@ -1,4 +1,4 @@
-import { cilX } from '@coreui/icons'
+import { cilUserFollow, cilX } from '@coreui/icons'
 import CIcon from '@coreui/icons-react'
 import cart from 'src/assets/images/cart.png'
 import 'src/assets/css/cart.css'
@@ -25,12 +25,12 @@ import {
   CListGroupItem,
   CNav,
   CNavItem,
-  CNavLink,
+  CFormFeedback,
   CCol,
   CRow,
   CTable,
   CTableBody,
-  CTableCaption,
+  CFormLabel,
   CTableDataCell,
   CTableHead,
   CTableHeaderCell,
@@ -39,10 +39,13 @@ import {
   CFormInput,
 } from '@coreui/react'
 import Swal from 'sweetalert2'
-import React , { useState , useEffect } from 'react'
+import React , { useState , useEffect , useContext, useRef } from 'react'
 import * as axiosApi from 'src/api/axiosApi'
-import { useNavigate } from 'react-router-dom'
+  import { cilQrCode } from '@coreui/icons'
+  import { useNavigate } from 'react-router-dom'
 import io from "socket.io-client";
+import { Context } from 'src/components/context/contextProvider'
+import QrScanner from 'react-qr-scanner';
 
 const socket = io.connect("http://localhost:5001");
 
@@ -58,10 +61,35 @@ const Cart = () => {
   const navigate = useNavigate()
   const idClient = localStorage.getItem("user")?JSON.parse(localStorage.getItem("user")).user.payload.user._id:null
   const Client = localStorage.getItem("user")?JSON.parse(localStorage.getItem("user")).user.payload.user:null
+  const [isScanning, setIsScanning] = useState(false);
+  const [qrCodeValue, setQrCodeValue] = useState('');
+
+
+  const handleScan = (result) => {
+    if (result) {
+      setQrCodeValue(result.text);
+      setIsScanning(false);
+      setNumtable(result.text);
+      Swal.fire({
+        position: 'center',
+        icon: 'success',
+        title: `Your are in the table N° ${result.text}`,
+        showConfirmButton: false,
+        timer: 1500
+      })
+    }
+  };
+  
+  const handleError = (error) => {
+    console.error('QR code scan error:', error);
+  };
+
+  const {changeData } = useContext(Context)
 
   const [products, setProducts] = useState([])
   const [prixTotal, setPrixtotal] = useState(0)
   const [idService, setIdService] = useState("")
+  const [numtable, setNumtable] = useState("")
 
   const [visible, setVisible] = useState(false)
 
@@ -71,6 +99,7 @@ const Cart = () => {
       {
         navigate('/wait')
       }else{
+        changeData(localStorage.length - 1)
         let total = 0;
         const updatedProducts = [];
 
@@ -91,14 +120,16 @@ const Cart = () => {
   }, []);
 
   const handleClearAll = () => {
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i)
-      if (key.startsWith('product_')) {
-        localStorage.removeItem(key)
-      }
+    const userValue = localStorage.getItem('user');
+    localStorage.clear(); 
+    
+    if (userValue) {
+      localStorage.setItem('user', userValue);
     }
-    setProducts([])
-    setPrixtotal(0)
+  
+    changeData(localStorage.length - 1);
+    setProducts([]);
+    setPrixtotal(0);
   }
 
   const Toast = Swal.mixin({
@@ -109,62 +140,57 @@ const Cart = () => {
     timerProgressBar: true,
   })
 
+
   const handleCommande = () => {
-    console.log(products);
-    axiosApi.getBYID(GET_CUSTOM_URL, idClient).then( (res) => {
-
-      const sold = res.solde
-    if (sold >= prixTotal) {
-        const numtable = '125'
-        axiosApi.post(POST_COMMANDE_URL, { prixTotal, idClient, idService, numtable })
-          .then((res) => {
-            socket.emit("add_Order");
-            const idCommand = res.commande._id;
-            axiosApi.put(UPDATE_CUSTOM_SOLD_URL, idClient, { sold: -prixTotal })
-              .then((res) => {
-                products.map((product) => {
-                   axiosApi.getBYID(GET_PRODUCT_URL, product._id).then((res) => {
-                    if(res.quantity != -1) {
-                      axiosApi.put(UPDATE_PRODUCT_QUANTITY_URL, product._id, { quantity: -(product.quantity) })
-                        .then( () => {
-                          console.log('updated quantity of ' + product.name)
-                        }).catch((err) => console.log(err))
-                    }
-                  }).catch((err) => console.log(err))
-                   axiosApi.post(POST_LIGNECOMMANDE_URL, { quantite: product.quantity, idCommande: idCommand, idProduct: product._id })
-                    .then(() => {
-                      console.log('ligne added ' + product.name)
-                    }).catch((err) => console.log(err))
-                })
-                handleClearAll();
-                Swal.fire({
-                  position: 'center',
-                  icon: 'success',
-                  title: 'Your work has been saved',
-                  showConfirmButton: false,
-                  timer: 1500
-                })
-              }).catch((err) => console.log(err))
-          }).catch((err) => console.log(err))
-      } else {
-        Swal.fire({
-          position: 'center',
-          icon: 'error',
-          title: 'Insufficient balance',
-          showConfirmButton: false,
-          timer: 1500
-        })
-      }
-      setVisible(false)
-    })
+    const Toast = Swal.mixin({
+      toast: true,
+      position: 'top',
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true,
+    });
+    if(numtable === ""){
+      Toast.fire({
+        icon: 'error',
+        title: 'Pleace check your table',
+      });
+    }else{
+      axiosApi.getBYID(GET_CUSTOM_URL, idClient).then( (res) => {
+        const sold = res.solde
+        if (sold >= prixTotal) {
+          console.log(products)
+          axiosApi.post(POST_COMMANDE_URL, { prixTotal, idClient, idService, numtable , lignesCommandes : products})
+            .then((res) => {
+              socket.emit("add_Order");
+              handleClearAll();
+              Swal.fire({
+                position: 'center',
+                icon: 'success',
+                title: 'Your Order has been Confirmed',
+                showConfirmButton: false,
+                timer: 1500
+              })
+            }).catch((err) => console.log(err))
+        } else {
+          Swal.fire({
+            position: 'center',
+            icon: 'error',
+            title: 'Insufficient balance',
+            showConfirmButton: false,
+            timer: 1500
+          })
+        }
+        setVisible(false)
+      })
+    }
   }
-
   const handleDelete = (product) => {
     Toast.fire({
       icon: 'error',
-      title: 'Delete successfully'
+      title: 'Successfully Deleted'
     })
     localStorage.removeItem(`product_${product._id}`)
+    changeData(localStorage.length - 1)
     const newProducts = products.filter((p) => p._id !== product._id)
     let total = 0;
     newProducts.forEach((p) => {
@@ -176,26 +202,44 @@ const Cart = () => {
   }
 
   const UpdateQuantity = (product , value) => {
+    axiosApi.getBYID(GET_PRODUCT_URL, product._id).then((res) => {
     const newProducts = products.map((p) => {
       if (p._id === product._id) {
         const cartItem = JSON.parse(localStorage.getItem(`product_${product._id}`))
-        if(!(cartItem.quantity === 1 && value === -1)){
-          localStorage.setItem(`product_${product._id}`,
-          JSON.stringify({
-            ...cartItem,
-            quantity: cartItem.quantity + value,
-          })
-          )
-          return { ...p, quantity: cartItem.quantity + value }
-        }
+          if(res.quantity === -1){
+            if(!(cartItem.quantity === 1 && value === -1)){
+              localStorage.setItem(`product_${product._id}`,
+              JSON.stringify({
+                ...cartItem,
+                quantity: cartItem.quantity + value,
+              })
+              )
+              return { ...p, quantity: cartItem.quantity + value }
+            }
+          }else{
+            if(res.quantity > cartItem.quantity || (res.quantity == cartItem.quantity && value == -1)){
+              if(!(cartItem.quantity === 1 && value === -1)){
+                localStorage.setItem(`product_${product._id}`,
+                JSON.stringify({
+                  ...cartItem,
+                  quantity: cartItem.quantity + value,
+                })
+                )
+                return { ...p, quantity: cartItem.quantity + value }
+              }
+            }
+          }
       }
       return p;
     });
+    
     setProducts(newProducts);
     const newPrixtotal = newProducts.reduce(
-      (total, p) => total + p.prix * p.quantity, 0
+      (total, cartItem) => total + cartItem.prix * cartItem.quantity, 0
     );
     setPrixtotal(newPrixtotal);
+    
+  })
   }
 
 
@@ -206,7 +250,7 @@ const Cart = () => {
         {products.length > 0 ? (
           <CCard >
             <CCardHeader>
-               <strong>MY Cart</strong>
+               <strong>MY Wallet</strong>
             </CCardHeader>
             <CCardBody>
               <CTable striped>
@@ -219,7 +263,7 @@ const Cart = () => {
                     <CTableHeaderCell scope="col"></CTableHeaderCell>
                   </CTableRow>
                   </CTableHead>
-                  <CTableBody>
+                  <CTableBody style={{fontSize:'17px'}}>
                     {products.map((product) => (
                       <CTableRow key={product._id}>
                         <CTableDataCell>{product.name}</CTableDataCell>
@@ -240,10 +284,10 @@ const Cart = () => {
                         <CTableDataCell><CButton color="secondary" onClick={() => handleDelete(product)}><CIcon icon={cilX} className="me-2"/></CButton></CTableDataCell>
                       </CTableRow>
                     ))}
-                    <CTableRow>
+                    <CTableRow className='my-2'>
                       <CTableDataCell  colSpan="3"><CButton color='warning' onClick={() => navigate('/serviceCustomer')}>Back to Shop</CButton></CTableDataCell>
                       <CTableHeaderCell>Total : {prixTotal} DT</CTableHeaderCell>
-                      <CTableDataCell><CButton color='info' onClick={() => setVisible(!visible)} >Commander</CButton></CTableDataCell>
+                      <CTableDataCell><CButton color='info' onClick={() => setVisible(!visible)} style={{width:'100%'}}>Order</CButton></CTableDataCell>
                     </CTableRow>
                   </CTableBody>
               </CTable>
@@ -285,9 +329,35 @@ const Cart = () => {
                 <th></th>
                 <th>Total : </th>
                 <th>{prixTotal} DT</th>
-                </tr>
+              </tr>
+              <tr className='m-2 '>
+                <th>
+                  <CCol md={4}>
+                      <CFormInput 
+                        type="text"
+                        id="validationCustom01"
+                        value={qrCodeValue}
+                        placeholder='Table number'
+                        onChange={(e) => setNumtable(e.target.value)}
+                        required 
+                      />
+                      <CButton color="secondary" onClick={() => setIsScanning(prev => !prev)}>
+                        <CIcon icon={cilUserFollow} className="me-2" />{isScanning ? 'Stop Scanning' : 'Scan QR Code'}
+                      </CButton>
+                  </CCol>
+                </th>
+              </tr>
               </tfoot>
           </table>
+          <div>
+            {isScanning && (
+              <QrScanner
+                onScan={handleScan}
+                onError={handleError}
+                facingmode="environment"
+              />
+            )}
+        </div>
           </CModalBody>
           <CModalFooter>
             <CButton color="secondary" onClick={() => setVisible(false)}>
@@ -296,6 +366,7 @@ const Cart = () => {
             <CButton color="primary" onClick={() => handleCommande()}>Confirm</CButton>
           </CModalFooter>
         </CModal>
+  
     </>
   )
 }

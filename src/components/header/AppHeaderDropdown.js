@@ -30,6 +30,8 @@ const AppHeaderDropdown = () => {
   const Logout = () => {
     localStorage.clear()
     navigate('login/0')
+    window.location.reload()
+
   } 
   return (
     <CDropdown variant="nav-item">
@@ -50,12 +52,12 @@ const AppHeaderDropdown = () => {
         
         <CDropdownItem href="/profileSuperAdmin"> 
           <CIcon icon={cilUser} className="me-2" />
-          Profile
+          Profil
         </CDropdownItem>
         <CDropdownDivider />
         <CDropdownItem onClick={() => {Logout()}}>
           <CIcon icon={cilLockLocked} className="me-2" />
-          Lock Account
+          Logout
         </CDropdownItem>
       </CDropdownMenu>
     </CDropdown>

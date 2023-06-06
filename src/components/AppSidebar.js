@@ -5,9 +5,9 @@ import { CSidebar, CSidebarBrand, CSidebarNav, CSidebarToggler } from '@coreui/r
 import CIcon from '@coreui/icons-react'
 
 import { AppSidebarNav } from './AppSidebarNav'
+import { cilInstitution } from '@coreui/icons'
 
 import { logoNegative } from 'src/assets/brand/logo-negative'
-import { sygnet } from 'src/assets/brand/sygnet' 
 
 import SimpleBar from 'simplebar-react'
 import 'simplebar/dist/simplebar.min.css'
@@ -32,6 +32,7 @@ const AppSidebar = () => {
   return (
     <CSidebar
       position="fixed"
+      style={{backgroundColor:'#102542'}}
       unfoldable={unfoldable}
       visible={sidebarShow}
       onVisibleChange={(visible) => {
@@ -39,8 +40,8 @@ const AppSidebar = () => {
       }}
     >
       <CSidebarBrand className="d-none d-md-flex" to="/">
-        <CIcon className="sidebar-brand-full" icon={logoNegative} height={35} />
-        <CIcon className="sidebar-brand-narrow" icon={sygnet} height={35} />
+        <img src='/logo.png' alt="Logo" className="sidebar-brand-full" style={{paddingBottom:'13px',paddingTop:'12px'}} width={120}/>
+        <CIcon className="sidebar-brand-narrow" icon={cilInstitution} height={35} />
       </CSidebarBrand>
       <CSidebarNav>
         <SimpleBar>

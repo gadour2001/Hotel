@@ -19,13 +19,16 @@ import {
   CModalHeader,
   CModalTitle,
   CFormInput,
-  CFormLabel
+  CFormLabel,
+  CWidgetStatsC
   
 } from '@coreui/react'
 import WidgetsDropdown from '../../widgets/WidgetsDropdown'
 import Swal from 'sweetalert2'
 import * as axiosApi from 'src/api/axiosApi'
 import io from "socket.io-client";
+import CIcon from '@coreui/icons-react'
+import { cilBasket, cilChartPie, cilSpeedometer, cilUserFollow } from '@coreui/icons'
 
 const socket = io.connect("http://localhost:5001");
 
@@ -47,9 +50,6 @@ const DashboardCustomerManager = () => {
   const idManager = localStorage.getItem('user')?JSON.parse(localStorage.getItem('user')).user.payload.user._id:null
   
   const handleUpdate = async () => {
-    console.log(sold);
-    console.log(nbrJour);
-    console.log(numChambre);
     axiosApi.put( UPDATE_CUSTOM_URL, client , {sold : sold , nbrJour : nbrJour , numChambre : numChambre})
     .then((res) => {
       axiosApi.post(ADD_LOG_URL, { idClient : client , idResponsable : idManager , sold : sold }).then((res) => {
@@ -84,12 +84,57 @@ const DashboardCustomerManager = () => {
 
   return (
     <>
-      <WidgetsDropdown />
+      <CRow>
+            <CCol sm={6} md={3}>
+              <CWidgetStatsC
+                color="success"
+                icon={<CIcon icon={cilUserFollow} height={36} />}
+                value="385"
+                title="New Clients"
+                inverse
+                progress={{ value: 75 }}
+                className="mb-4"
+              />
+            </CCol>
+            <CCol sm={6} md={3}>
+              <CWidgetStatsC
+                color="warning"
+                icon={<CIcon icon={cilBasket} height={36} />}
+                value="1238"
+                title="Products sold"
+                inverse
+                progress={{ value: 75 }}
+                className="mb-4"
+              />
+            </CCol>
+            <CCol sm={6} md={3}>
+              <CWidgetStatsC
+                color="primary"
+                icon={<CIcon icon={cilChartPie} height={36} />}
+                value="28%"
+                title="Returning Visitors"
+                inverse
+                progress={{ value: 75 }}
+                className="mb-4"
+              />
+            </CCol>
+            <CCol sm={6} md={3}>
+              <CWidgetStatsC
+                color="danger"
+                icon={<CIcon icon={cilSpeedometer} height={36} />}
+                value="5:34:11"
+                title="Avg. Time"
+                inverse
+                progress={{ value: 75 }}
+                className="mb-4"
+              />
+            </CCol>
+          </CRow>
       <CRow>
         <CCol xs={12}>
           <CCard className="mb-4">
             <CCardHeader>
-                <strong>Client</strong>
+                <strong>Customer</strong>
             </CCardHeader>
             <CCardBody>
                 <CTable>
@@ -98,7 +143,7 @@ const DashboardCustomerManager = () => {
                       <CTableHeaderCell scope="col">Username</CTableHeaderCell>
                       <CTableHeaderCell scope="col">Email</CTableHeaderCell>
                       <CTableHeaderCell scope="col">Date of Birth</CTableHeaderCell>
-                      <CTableHeaderCell scope="col">Passport</CTableHeaderCell>
+                      <CTableHeaderCell scope="col">Passport ID / ID</CTableHeaderCell>
                       <CTableHeaderCell scope="col">Action</CTableHeaderCell>
                     </CTableRow>
                   </CTableHead>
@@ -115,7 +160,7 @@ const DashboardCustomerManager = () => {
                       <CTableDataCell>{client.idPassport}</CTableDataCell>
                       <CTableDataCell><CButton color='info' onClick={() => {setVisible(true);setClient(client._id)}}>Validation</CButton></CTableDataCell>
                       </CTableRow>
-                    ) : <CTableRow><CTableDataCell>Not Data Found</CTableDataCell></CTableRow>}
+                    ) : <CTableRow><CTableDataCell colSpan={5} style={{textAlign:'center'}}>Data Not Found</CTableDataCell></CTableRow>}
                   </CTableBody>
                 </CTable>
             </CCardBody>

@@ -6,10 +6,13 @@ import App from './App'
 import reportWebVitals from './reportWebVitals'
 import { Provider } from 'react-redux'
 import store from './store'
+import { ContextProvider } from './components/context/contextProvider'
 
 createRoot(document.getElementById('root')).render(
   <Provider store={store}>
-    <App />
+    <ContextProvider>
+      <App />
+    </ContextProvider>
   </Provider>,
 )
 
