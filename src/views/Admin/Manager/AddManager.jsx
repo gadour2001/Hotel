@@ -21,7 +21,7 @@ import {
     CNavItem,
     CNavLink
 } from '@coreui/react'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { cilMediaPlay } from '@coreui/icons'
 import CIcon from '@coreui/icons-react'
 
@@ -44,6 +44,7 @@ const AddManager = () => {
   const [validated, setValidated] = useState(false)
   const idAdmin = localStorage.getItem('user')?JSON.parse(localStorage.getItem('user')).user.payload.user._id:null
   const { id } = useParams()
+  const navigate = useNavigate()
 
   const [manager_username , setManager_username] = useState('')
   const [manager_email , setManager_email] = useState('')
@@ -64,6 +65,7 @@ const AddManager = () => {
   }
 
   const handleSubmitService = (event) => {
+    event.preventDefault()
     const form = event.currentTarget
     if (form.checkValidity() === false) {
       event.preventDefault()
@@ -81,12 +83,13 @@ const AddManager = () => {
           idService:manager_service,
           idAdmin:idAdmin
         })
-        .then((res) => {
-          Swal.fire(
+        .then(async(res) => {
+          await Swal.fire(
             'Added!',
             'Your manager has been added.',
             'success'
           )
+          navigate('/manager')
         })
         .catch((err) => {
           Swal.fire(
@@ -99,16 +102,16 @@ const AddManager = () => {
         axiosApi.put(UPDATE_SERVICE_MANAGER_URL, id , {
           username:manager_username,
           email:manager_email,
-          password:manager_password,
           dateBirth:manager_date,
           idService:manager_service
         })
-        .then((res) => {
-          Swal.fire(
+        .then(async(res) => {
+          await Swal.fire(
             'Updated!',
             'Your manager has been updated.',
             'success'
           )
+          navigate('/manager')
         })
         .catch((err) => {
           Swal.fire(
@@ -116,6 +119,7 @@ const AddManager = () => {
             "Your manager has been dosen't updated.",
             'error'
           )
+
         })
       }
     }
@@ -211,7 +215,7 @@ const AddManager = () => {
 
 
   const handleSubmitCustomer = (event) => {
-
+    event.preventDefault()
     const form = event.currentTarget
     if (form.checkValidity() === false) {
       event.preventDefault()
@@ -228,12 +232,13 @@ const AddManager = () => {
           dateBirth:manager_date,
           idAdmin:idAdmin
         })
-        .then((res) => {
-          Swal.fire(
+        .then(async(res) => {
+          await Swal.fire(
             'Added!',
             'Your manager has been added.',
             'success'
           )
+          navigate('/manager')
         })
         .catch((err) => {
           Swal.fire(
@@ -249,12 +254,13 @@ const AddManager = () => {
           password:manager_password,
           dateBirth:manager_date
         })
-        .then((res) => {
-          Swal.fire(
+        .then(async(res) => {
+          await Swal.fire(
             'Updated!',
             'Your manager has been updated.',
             'success'
           )
+          navigate('/manager')
         })
         .catch((err) => {
           Swal.fire(

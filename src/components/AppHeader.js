@@ -23,6 +23,8 @@ import  cart  from 'src/assets/images/cart.png'
 import * as axiosApi from 'src/api/axiosApi'
 
 const GET_HOTELNAME_URL = '/admin/getHotelName/'
+const GET_ALL_RESERVATION_URL = 'reservation/get'
+const UPDATE_RESERVATION_STATUS_URL='/reservation/update/status/'
 
 const AppHeader = () => {
   const navigate = useNavigate()
@@ -37,10 +39,21 @@ const AppHeader = () => {
     changeData(localStorage.length-1)
     if (role==null) {
       navigate('login/0')
-    }else if(role=='client'){
-      axiosApi.getBYID(GET_HOTELNAME_URL , idClient)
-      .then((res) => {console.log(res); setName(res)})
+    }else{
+      axiosApi.get(GET_ALL_RESERVATION_URL)
+      .then((res) => {
+        for (let i = 0; i < res.length; i++) {
+          let date=new Date(res[i].horaire)
+          if (date <= Date.now()) {
+            axiosApi.put(UPDATE_RESERVATION_STATUS_URL , res[i]._id , {etat: "fini"})
+            .then(() => { console.log('Custom status updated successfully.')
+            }).catch((error) => console.error('Error updating service status:', error))
+            
+          }
+        }
+      }).catch((err) => console.log(err))
     }
+
   },[state])
   
     return (

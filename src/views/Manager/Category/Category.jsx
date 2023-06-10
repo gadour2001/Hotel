@@ -103,6 +103,7 @@ const Category = () => {
                     <CTableRow>
                       <CTableHeaderCell scope="col">Image</CTableHeaderCell>
                       <CTableHeaderCell scope="col">Name</CTableHeaderCell>
+                      <CTableHeaderCell scope="col">Type</CTableHeaderCell>
                       <CTableHeaderCell scope="col">Update</CTableHeaderCell>
                       <CTableHeaderCell scope="col">Delete</CTableHeaderCell>
                     </CTableRow>
@@ -112,6 +113,7 @@ const Category = () => {
                     <CTableRow key={category._id}>
                       <CTableDataCell><img style={{height:60+'px'}} src={category.image} alt={category.name} /></CTableDataCell>
                       <CTableDataCell>{category.name}</CTableDataCell>
+                      <CTableDataCell>{category.type}</CTableDataCell>
                       <CTableDataCell><Link to={`/category/addCategory/${category._id}`}><CButton color="warning">Update</CButton></Link></CTableDataCell>
                       <CTableDataCell><CButton color="danger" onClick={() => handleDelete(category._id)}>Delete</CButton></CTableDataCell>
                     </CTableRow>

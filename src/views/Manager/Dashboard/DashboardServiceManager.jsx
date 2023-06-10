@@ -59,7 +59,6 @@ const GET_ORDER_URL = '/commande/get/Service/'
 const UPDATE_COMMANDE_STATUS = '/commande/update/status/'
 
 const GET_RESERVATION_URL = '/reservation/get/Service/'
-const UPDATE_RESERVATION_STATUS = '/reservation/update/status/'
 
 
 
@@ -118,21 +117,6 @@ const DashboardServiceManager = () => {
         get_Reservation(idService)
       });
     }, [socket]);
-    // useEffect(() => {
-    //   axiosApi.getBYID(GET_RESERVATION_URL,id)
-    //   .then((res) => {
-    //     console.log(res);
-    //     for (let i = 0; i < res.length; i++) {
-    //       let date=new Date(res[i].horaire)
-    //       date.setDate(date.getDate()+res[i].nbrJour)
-    //       if (date<=Date.now() && res[i].isActive) {
-    //         axiosApi.put(UPDATE_CUSTOM_STATUS_URL , res[i]._id , {isActive: false})
-    //         .then(() => { console.log('Custom status updated successfully.')
-    //         }).catch((error) => console.error('Error updating service status:', error))
-    //       }
-    //     }
-    //   }).catch((err) => console.log(err))
-    // },[])
   return (
     <>
       <CRow>
@@ -204,7 +188,7 @@ const DashboardServiceManager = () => {
                   <CTableBody>
                     {reservations.map((reservation) => 
                     <CTableRow key={reservation._id}>
-                      <CTableDataCell>{new Date(reservation.date).toLocaleDateString('en-US', {
+                      <CTableDataCell>{new Date(reservation.horaire).toLocaleDateString('en-US', {
                             year: 'numeric',
                             month: '2-digit',
                             day: '2-digit'

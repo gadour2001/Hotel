@@ -35,7 +35,7 @@ const AddCategory = () => {
   
   const [category_name, setCategory_name] = useState('')
   const [category_description, setCategory_description] = useState('')
-  const [category_image, setCategory_image] = useState('')
+  const [category_type, setCategory_type] = useState('')
 
   const [service , setService] = useState({})
 
@@ -59,7 +59,7 @@ const AddCategory = () => {
   }
 
   const handleSubmit = (event) => {
-
+    event.preventDefault();
     const form = event.currentTarget
     if (form.checkValidity() === false) {
       event.preventDefault()
@@ -73,7 +73,8 @@ const AddCategory = () => {
           name:category_name,
           description:category_description,
           image:base64Image,
-          idService:idService  
+          idService:idService, 
+          type:category_type
         })
         .then(async (res) => {
           await Swal.fire(
@@ -96,6 +97,7 @@ const AddCategory = () => {
           name:category_name,
           description:category_description,
           image:base64Image,
+          type:category_type
         })
         .then(async (res) => {
           await Swal.fire(
@@ -122,6 +124,7 @@ const AddCategory = () => {
       setCategory_name(res.name)
       setCategory_description(res.description)
       setBase64Image(res.image)
+      setCategory_type(res.type)
     })
     .catch((err) => console.log(err))
   }
@@ -158,7 +161,7 @@ const AddCategory = () => {
                 </CCol>
                 <CCol md={6}>
                     <CFormLabel htmlFor="validationCustom02">Description</CFormLabel>
-                    <CFormInput 
+                    <CFormTextarea 
                       type="text" 
                       id="validationCustom02" 
                       onChange={(e) => setCategory_description(e.target.value)}
@@ -174,19 +177,32 @@ const AddCategory = () => {
                       disabled
                     />
                 </CCol>
-                <CCol md={6}>
+                <CCol md={4}>
                     <CFormLabel htmlFor="validationCustomUsername">Image</CFormLabel>
                     <CInputGroup className="has-validation">
                     <CFormInput
                         type="file"
                         id="validationCustomUsername"
-                        defaultValue={category_image}
+                        defaultValue={base64Image}
                         aria-describedby="inputGroupPrepend"
                         onChange={(e) => {handleImageChange(e)}}
                     />
                     <CFormFeedback invalid>Please choose a Image.</CFormFeedback>
                     </CInputGroup>
                 </CCol> 
+                <CCol md={4}>
+                  <CFormLabel htmlFor="validationCustom06">Type</CFormLabel>
+                  <CFormSelect 
+                    aria-label="Default select example" 
+                    defaultValue={category_type}
+                    onChange={(e) => setCategory_type(e.target.value)}
+                    required
+                  >
+                      <option>choose a type of category</option>
+                      <option value={"service"}>Service category</option>
+                      <option value={"material"}>Consumable category</option>
+                  </CFormSelect>
+                </CCol>
                 <CCol xs={12}>
                     <CButton color="primary" type="submit">
                     {id === '0' ? "Add Category" : "Edit Category"}

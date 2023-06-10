@@ -102,7 +102,7 @@ const Login = () => {
     .then((res) => {
       Swal.fire(
         'Email sent!',
-        '',
+        'Password reset instructions sent to email',
         'success'
       )
       setVisible(false)
@@ -115,11 +115,10 @@ const Login = () => {
   useEffect(()=>{
     // axiosApi.get(GET_ALL_CLIENTS_URL)
     //   .then((res) => {
-    //     console.log(res);
     //     for (let i = 0; i < res.length; i++) {
     //       let date=new Date(res[i].dateEntre)
     //       date.setDate(date.getDate()+res[i].nbrJour)
-    //       if (date<=Date.now() && res[i].isActive) {
+    //       if (date<=(Date.now()+(60*60*1000)) && res[i].isActive) {
     //         axiosApi.put(UPDATE_CUSTOM_STATUS_URL , res[i]._id , {isActive: false})
     //         .then(() => { console.log('Custom status updated successfully.')
     //         }).catch((error) => console.error('Error updating service status:', error))

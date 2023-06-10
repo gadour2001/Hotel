@@ -169,7 +169,7 @@ const DashboardCustomerManager = () => {
       </CRow>
       <CModal scrollable visible={visible} onClose={() => setVisible(false)}>
           <CModalHeader>
-            <CModalTitle>Reset Password</CModalTitle>
+            <CModalTitle>Customer Validation</CModalTitle>
           </CModalHeader>
           <CModalBody>
           <CCol md={4}>

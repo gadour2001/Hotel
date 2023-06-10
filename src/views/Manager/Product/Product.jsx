@@ -136,13 +136,44 @@ const Product = () => {
                 <CAccordionItem itemKey={category._id} key={category._id} onClick={() => get_Products_Category(category._id)} >
                   <CAccordionHeader>{category.name}</CAccordionHeader>
                   <CAccordionBody>
+                    {category.type === "material" ? (
+                      <CTable striped>
+                        <CTableHead>
+                          <CTableRow>
+                            <CTableHeaderCell scope="col">Image</CTableHeaderCell>
+                            <CTableHeaderCell scope="col">Name</CTableHeaderCell>
+                            <CTableHeaderCell scope="col">Price</CTableHeaderCell>
+                            <CTableHeaderCell scope="col">Quantity</CTableHeaderCell>
+                            <CTableHeaderCell scope="col">Type of Product</CTableHeaderCell>
+                            <CTableHeaderCell scope="col">Update</CTableHeaderCell>
+                            <CTableHeaderCell scope="col">Delete</CTableHeaderCell>
+                            <CTableHeaderCell scope="col"><Link to={`/product/addProduct/0/${category._id}`}><CButton color="info">Add Product</CButton></Link></CTableHeaderCell>
+                          </CTableRow>
+                        </CTableHead>
+                        <CTableBody>
+                          {products.length > 0 ? products.map((product) => (
+                          <CTableRow key={product._id}>
+                            <CTableDataCell><img style={{width:70+'px'}} src={product.image} alt={product.name} /></CTableDataCell>
+                            <CTableDataCell>{product.name}</CTableDataCell>
+                            <CTableDataCell>{product.prix} DT</CTableDataCell>
+                            <CTableDataCell>{product.quantity == -1 ? "unlimited" : product.quantity}</CTableDataCell>
+                            <CTableDataCell>{product.__t === 'materialProduct' ? "Consumable" : "Service"}</CTableDataCell>
+                            <CTableDataCell><Link to={`/product/addProduct/${product._id}/${category._id}`}><CButton color="warning">Update</CButton></Link></CTableDataCell>
+                            <CTableDataCell><CButton color="danger" onClick={() => handleDelete(product._id)}>Delete</CButton></CTableDataCell>
+                            {product.quantity === -1 ? (<CTableDataCell></CTableDataCell>) : (<CTableDataCell><CButton color="success" onClick={() => handleStock(product._id,category._id)}>Add Quantity</CButton></CTableDataCell>)}
+                          </CTableRow>
+                          )) : <CTableRow><CTableDataCell  colSpan={8} style={{textAlign:'center'}}>Data Not Found</CTableDataCell></CTableRow>}
+                        </CTableBody>
+                      </CTable>
+                  ) : (
                     <CTable striped>
                     <CTableHead>
                       <CTableRow>
                         <CTableHeaderCell scope="col">Image</CTableHeaderCell>
                         <CTableHeaderCell scope="col">Name</CTableHeaderCell>
                         <CTableHeaderCell scope="col">Price</CTableHeaderCell>
-                        <CTableHeaderCell scope="col">Quantity</CTableHeaderCell>
+                        <CTableHeaderCell scope="col">Duration</CTableHeaderCell>
+                        <CTableHeaderCell scope="col">Places Number</CTableHeaderCell>
                         <CTableHeaderCell scope="col">Type of Product</CTableHeaderCell>
                         <CTableHeaderCell scope="col">Update</CTableHeaderCell>
                         <CTableHeaderCell scope="col">Delete</CTableHeaderCell>
@@ -152,18 +183,19 @@ const Product = () => {
                     <CTableBody>
                       {products.length > 0 ? products.map((product) => (
                       <CTableRow key={product._id}>
-                        <CTableDataCell><img style={{width:70+'px'}} src={product.image} alt={product.name} /></CTableDataCell>
+                        <CTableDataCell><img style={{height:50+'px'}} src={product.image} alt={product.name} /></CTableDataCell>
                         <CTableDataCell>{product.name}</CTableDataCell>
                         <CTableDataCell>{product.prix} DT</CTableDataCell>
-                        <CTableDataCell>{product.quantity == -1 ? "unlimited" : product.quantity}</CTableDataCell>
+                        <CTableDataCell>{product.duree}</CTableDataCell>
+                        <CTableDataCell>{product.nbPlace}</CTableDataCell>
                         <CTableDataCell>{product.__t === 'materialProduct' ? "Consumable" : "Service"}</CTableDataCell>
                         <CTableDataCell><Link to={`/product/addProduct/${product._id}/${category._id}`}><CButton color="warning">Update</CButton></Link></CTableDataCell>
                         <CTableDataCell><CButton color="danger" onClick={() => handleDelete(product._id)}>Delete</CButton></CTableDataCell>
-                        {product.quantity === -1 ? (<CTableDataCell></CTableDataCell>) : (<CTableDataCell><CButton color="success" onClick={() => handleStock(product._id,category._id)}>Add Quantity</CButton></CTableDataCell>)}
                       </CTableRow>
                       )) : <CTableRow><CTableDataCell  colSpan={8} style={{textAlign:'center'}}>Data Not Found</CTableDataCell></CTableRow>}
                     </CTableBody>
                   </CTable>
+                  )}
                   </CAccordionBody>
                 </CAccordionItem>
                 )) : ""}

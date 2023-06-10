@@ -60,7 +60,7 @@ const Client = () => {
     
     const UpdateSold = async (id) => {
       const { value: sold } = await Swal.fire({
-        title: 'New Balance ',
+        title: 'Add Balance ',
         input: 'number',
         inputLabel: '',
         inputPlaceholder: 'Enter New Balance'

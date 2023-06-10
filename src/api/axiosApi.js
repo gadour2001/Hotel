@@ -11,11 +11,6 @@ export async function get(url, config = {}) {
         .get(url, { ...config })
         .then(response => response.data)
 }
-export async function getSeance(url, id, data) {
-    return await axiosApi
-        .put(url + id, data)
-        .then(response => response.data)
-}
 export async function getBYID(url, id , config = {}) {
     return await axiosApi
         .get(url + id, { ...config })

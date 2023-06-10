@@ -126,9 +126,12 @@ const ProductCustomer = () => {
         <CCol xs>
           <CCard className="mb-12">
             <CCardHeader>
-              <strong>Products</strong>
+              <span></span>
             </CCardHeader>
             <CCardBody>
+              <h5>
+              Our restaurant offers an extensive menu carefully crafted by our talented chefs, who skillfully blend international flavors with locally sourced ingredients. From gourmet appetizers to delectable main courses and mouthwatering desserts, our menu caters to diverse palates and dietary preferences. Whether you are a seafood lover, a vegetarian enthusiast, or an adventurous foodie, our restaurant has something to satisfy every craving.
+              </h5>
               <div >
                 {categorys.length > 0 ? (
                   categorys.map((category) => (
@@ -155,7 +158,7 @@ const ProductCustomer = () => {
                                 <div >
                                   <CCardTitle>{product.name}</CCardTitle>
                                   <CCardText>{product.description}</CCardText>
-                                  <CCardTitle>{product.prix}</CCardTitle>
+                                  <CCardTitle>{product.prix} DT</CCardTitle>
                                   <Link  to={`/serviceCustomer/productCustomer/itemPage/${id}/${product._id}`}><CButton style={{width: '100%'}}>Book Service</CButton></Link>
                                 </div>
                               )}

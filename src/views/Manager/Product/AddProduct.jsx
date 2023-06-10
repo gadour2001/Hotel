@@ -44,13 +44,13 @@ const AddProduct = () => {
   const { idCategory } = useParams()
 
   const [product_name , setProduct_name] = useState('')
-  const [product_prix , setProduct_prix] = useState('')
+  const [product_prix , setProduct_prix] = useState(0)
   const [product_description , setProduct_description] = useState('')
   const [product_idCategory , setProduct_idCategory] = useState(idCategory)
-  const [product_quantity , setProduct_quantity] = useState('')
+  const [product_quantity , setProduct_quantity] = useState(0)
   const [product__t , setProduct__t] = useState('')
-  const [product_duration , setProduct_duration] = useState('')
-  const [product_nbrPlaces , setProduct_nbrPlaces] = useState('')
+  const [product_duration , setProduct_duration] = useState(0)
+  const [product_nbrPlaces , setProduct_nbrPlaces] = useState(0)
 
 
   const [categorys , setCategorys] = useState([])
@@ -86,6 +86,7 @@ const AddProduct = () => {
     .catch((err) => console.log(err))
   }
   const handleSubmitMaterialProduct = (event) => {
+    event.preventDefault()
     const form = event.currentTarget
     if (form.checkValidity() === false) {
       event.preventDefault()
@@ -98,10 +99,10 @@ const AddProduct = () => {
         axiosApi.post(ADD_MATERIAL_PRODUCT_URL, {
           name:product_name,
           description:product_description,
-          prix:product_prix,
+          prix:parseFloat(product_prix),
           image:base64Image,
           idCategory:product_idCategory,
-          quantity:product_quantity
+          quantity:parseInt(product_quantity)
         })
         .then(async (res) => {
           await Swal.fire(
@@ -124,7 +125,7 @@ const AddProduct = () => {
         axiosApi.put(UPDATE_MATERIAL_PRODUCT_URL, idProduct , {
           name:product_name,
           description:product_description,
-          prix:product_prix,
+          prix:parseFloat(product_prix),
           image:base64Image,
         })
         .then(async(res) => {
@@ -259,7 +260,7 @@ const AddProduct = () => {
 
 
   const handleSubmitServiceProduct = (event) => {
-
+    event.preventDefault()
     const form = event.currentTarget
     if (form.checkValidity() === false) {
       event.preventDefault()
@@ -268,15 +269,19 @@ const AddProduct = () => {
     {
       if(idProduct === '0')
       { 
+        console.log(product_name);
+        console.log(product_duration);
+        console.log(product_nbrPlaces);
+        console.log(product_prix);
         event.preventDefault()
         axiosApi.post(ADD_SERVICE_PRODUCT_URL, {
           name:product_name,
           description:product_description,
-          prix:product_prix,
+          prix:parseFloat(product_prix),
           image:base64Image,
           idCategory:product_idCategory,
-          duree:product_duration,
-          nbPlace:product_nbrPlaces
+          duree:parseInt(product_duration),
+          nbPlace:parseInt(product_nbrPlaces)
         })
         .then(async(res) => {
           await Swal.fire(
@@ -297,9 +302,9 @@ const AddProduct = () => {
         axiosApi.put(UPDATE_SERVICE_PRODUCT_URL, idProduct , {
           name:product_name,
           description:product_description,
-          prix:product_prix,
+          prix:parseFloat(product_prix),
           image:base64Image,
-          duree:product_duration,
+          duree:(product_duration),
           nbPlace:product_nbrPlaces
         })
         .then(async(res) => {

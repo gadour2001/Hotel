@@ -1,38 +1,42 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react"
 // Import Swiper React components
-import { Swiper, SwiperSlide } from "swiper/react";
+import { Swiper, SwiperSlide } from "swiper/react"
 
 // Import Swiper styles
-import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/pagination";
+import "swiper/css"
+import "swiper/css/navigation"
+import "swiper/css/pagination"
 import * as axiosApi from 'src/api/axiosApi'
 
-import "src/assets/css/homeCustom.css";
-import SwiperCore, { Autoplay } from 'swiper';
+import "src/assets/css/homeCustom.css"
+import SwiperCore, { Autoplay } from 'swiper'
 
 // import required modules
-import { Navigation, Pagination, Mousewheel, Keyboard } from "swiper";
-import { Link, useNavigate } from "react-router-dom";
+import { Navigation, Pagination, Mousewheel, Keyboard } from "swiper"
+import { Link, useNavigate } from "react-router-dom"
 
 const GET_SERVICE_URL = '/service/adminActive/'
 
 const Home = () => {
-
+  // console.log(new Date(Date.now()).toISOString());
+  // const timezone = 1 
+  // const now = Date.now() + (60*60*1000)
+  // console.log(new Date(now).toISOString())
   const navigate = useNavigate()
-  SwiperCore.use([Autoplay]);
+  SwiperCore.use([Autoplay])
   const [services , setServices] = useState([])
 
 
   const Client = localStorage.getItem("user")?JSON.parse(localStorage.getItem("user")).user.payload.user:null
-  console.log(Client);
     useEffect(() => {
       if(localStorage.getItem('user')){
         if(Client.isActive === false)
         {
           navigate('/login/0')
         }else{
-          axiosApi.getBYID(GET_SERVICE_URL,'646fa87a03f4be6cf5fd824c').then((res) => {console.log(res); setServices(res)}).catch((err) => console.log(err))
+          axiosApi.getBYID(GET_SERVICE_URL,'646fa87a03f4be6cf5fd824c')
+          .then((res) => setServices(res))
+          .catch((err) => console.log(err))
         }
       }
     },[])

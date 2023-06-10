@@ -1,4 +1,4 @@
-import { cilUserFollow, cilX } from '@coreui/icons'
+import { cilX } from '@coreui/icons'
 import CIcon from '@coreui/icons-react'
 import cart from 'src/assets/images/cart.png'
 import 'src/assets/css/cart.css'
@@ -324,15 +324,9 @@ const Cart = () => {
               ))}
               </tbody>
               <tfoot>
-              <tr className='m-2 '>
-                <th></th>
-                <th></th>
-                <th>Total : </th>
-                <th>{prixTotal} DT</th>
-              </tr>
-              <tr className='m-2 '>
-                <th>
-                  <CCol md={4}>
+              <tr className='3-2 '>
+                <th style={{display: "flex"}}>
+                    <CCol md={3}> 
                       <CFormInput 
                         type="text"
                         id="validationCustom01"
@@ -340,12 +334,17 @@ const Cart = () => {
                         placeholder='Table number'
                         onChange={(e) => setNumtable(e.target.value)}
                         required 
+                        disabled
                       />
-                      <CButton color="secondary" onClick={() => setIsScanning(prev => !prev)}>
-                        <CIcon icon={cilUserFollow} className="me-2" />{isScanning ? 'Stop Scanning' : 'Scan QR Code'}
-                      </CButton>
-                  </CCol>
+                    </CCol>
+                    <CButton color="secondary" onClick={() => setIsScanning(prev => !prev)}> 
+                      <CIcon icon={cilQrCode} className="me-2" />{isScanning ? 'Stop Scanning' : 'Scan QR Code'}
+                    </CButton>
                 </th>
+                <th>
+                </th>
+                <th>Total : </th>
+                <th>{prixTotal} DT</th>
               </tr>
               </tfoot>
           </table>

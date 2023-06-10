@@ -21,7 +21,9 @@ import { useNavigate } from 'react-router-dom'
   
   const socket = io.connect("http://localhost:5001")
 
+const UPDATE_CUSTOM_SOLD_URL = '/client/updateSold/'
 const GET_RESERVATION_BY_CLIENT = '/reservation/get/Client/'
+const UPDATE_RESERVATION_STATUS_URL = '/reservation/update/status/'
 
 const Reservation = () => {
     const navigate = useNavigate()
@@ -30,9 +32,9 @@ const Reservation = () => {
     
 
     const get_Reservation_By_Client = (id) => {
-        // axiosApi.getBYID(GET_RESERVATION_BY_CLIENT , id)
-        // .then((res) =>setReservations(res))
-        // .catch((err) => console.log(err))
+        axiosApi.getBYID(GET_RESERVATION_BY_CLIENT , id)
+        .then((res) =>{setReservations(res)})
+        .catch((err) => console.log(err))
     }
     const Client = localStorage.getItem("user")?JSON.parse(localStorage.getItem("user")).user.payload.user:null
     useEffect(() => {
@@ -47,8 +49,8 @@ const Reservation = () => {
     },[idCustom])
 
     const handleUpdate = (id) => {
-        axiosApi.put('UPDATE_COMMANDE_STATUS', id , {etat : 'annuler'}).then((res) => {
-          axiosApi.put('UPDATE_CUSTOM_SOLD_URL' , idCustom , {sold : res.updatedOrder.prixTotal}).then((res) => {
+        axiosApi.put(UPDATE_RESERVATION_STATUS_URL, id , {etat : 'annuler'}).then((res) => {
+          axiosApi.put(UPDATE_CUSTOM_SOLD_URL , idCustom , {sold : res.reservation.prixTotal}).then((res) => {
             get_Reservation_By_Client(idCustom)
             socket.emit("Edit_Reservation")
           })
@@ -92,7 +94,7 @@ const Reservation = () => {
                                 day: '2-digit'
                             }).split('/').reverse().join('-')}</CTableDataCell>
                         <CTableDataCell>{new Date(reservation.horaire).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' , hour12: false})}</CTableDataCell>
-                        <CTableDataCell>{reservation.idServiceProduct}</CTableDataCell>
+                        <CTableDataCell>{reservation.idServiceProduct.name}</CTableDataCell>
                         <CTableDataCell>{reservation.prixTotal} DT</CTableDataCell>
                         <CTableDataCell>{reservation.nbPlace}</CTableDataCell>
                         <CTableDataCell>{reservation.etat === 'en attente' ? (<CButton color="danger" onClick={() => handleUpdate(reservation._id)}>Cancel</CButton>) : (<CBadge color="info">Finiched</CBadge>)}</CTableDataCell>
