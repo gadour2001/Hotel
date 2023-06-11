@@ -9,12 +9,9 @@ import {
     CAccordionBody,
     CAccordionHeader,
     CAccordionItem,
-  } from '@coreui/react'
-  import {
     CButton,
     CTable,
     CTableBody,
-    CTableCaption,
     CTableDataCell,
     CTableHead,
     CTableHeaderCell,
@@ -68,7 +65,7 @@ const Product = () => {
           .then(() => {
             swalWithBootstrapButtons.fire(
               'Deleted!',
-              'Your file has been deleted.',
+              'Your product has been deleted.',
               'success'
             )
             setProducts(products.filter((product) => product._id !== id))
@@ -76,7 +73,7 @@ const Product = () => {
           .catch((err) => {
             swalWithBootstrapButtons.fire(
               'Cancelled',
-              'Your imaginary file is safe :)',
+              'Your imaginary product is safe :)',
               'error'
             )
             console.log(err)
@@ -84,7 +81,7 @@ const Product = () => {
         } else if (result.dismiss === Swal.DismissReason.cancel) {
           swalWithBootstrapButtons.fire(
             'Cancelled',
-            'Your imaginary file is safe :)',
+            'Your imaginary product is safe :)',
             'error'
           )
         }
@@ -153,10 +150,10 @@ const Product = () => {
                         <CTableBody>
                           {products.length > 0 ? products.map((product) => (
                           <CTableRow key={product._id}>
-                            <CTableDataCell><img style={{width:70+'px'}} src={product.image} alt={product.name} /></CTableDataCell>
+                            <CTableDataCell><img style={{width:'70px' , height:'60px'}} src={product.image} alt={product.name} /></CTableDataCell>
                             <CTableDataCell>{product.name}</CTableDataCell>
                             <CTableDataCell>{product.prix} DT</CTableDataCell>
-                            <CTableDataCell>{product.quantity == -1 ? "unlimited" : product.quantity}</CTableDataCell>
+                            <CTableDataCell>{product.quantity === -1 ? "unlimited" : product.quantity}</CTableDataCell>
                             <CTableDataCell>{product.__t === 'materialProduct' ? "Consumable" : "Service"}</CTableDataCell>
                             <CTableDataCell><Link to={`/product/addProduct/${product._id}/${category._id}`}><CButton color="warning">Update</CButton></Link></CTableDataCell>
                             <CTableDataCell><CButton color="danger" onClick={() => handleDelete(product._id)}>Delete</CButton></CTableDataCell>

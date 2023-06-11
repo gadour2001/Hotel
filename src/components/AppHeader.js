@@ -22,7 +22,7 @@ import { logo } from 'src/assets/brand/logo'
 import  cart  from 'src/assets/images/cart.png'
 import * as axiosApi from 'src/api/axiosApi'
 
-const GET_HOTELNAME_URL = '/admin/getHotelName/'
+
 const GET_ALL_RESERVATION_URL = 'reservation/get'
 const UPDATE_RESERVATION_STATUS_URL='/reservation/update/status/'
 
@@ -30,7 +30,6 @@ const AppHeader = () => {
   const navigate = useNavigate()
   const {state , changeData} = useContext(Context)
   const dispatch = useDispatch()
-  const [name , setName ] = useState('')
   const sidebarShow = useSelector((state) => state.sidebarShow)
   const role = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')).user.payload.user.role : null
   const idClient = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')).user.payload.user._id : null
@@ -49,7 +48,7 @@ const AppHeader = () => {
             .then(() => { console.log('Custom status updated successfully.')
             }).catch((error) => console.error('Error updating service status:', error))
             
-          }
+          }   
         }
       }).catch((err) => console.log(err))
     }
@@ -57,7 +56,7 @@ const AppHeader = () => {
   },[state])
   
     return (
-      <CHeader position="sticky" className="mb-4"  style={{backgroundColor:'#0D1E39' }}>
+      <CHeader position="sticky" className="mb-4"  style={{backgroundColor:'#0D1E39' , height:'74px' }}>
           <CHeaderToggler
           style={{ marginRight:'100px',color:'white'}}
             className="ps-1"
@@ -66,7 +65,7 @@ const AppHeader = () => {
             <CIcon icon={cilMenu} size="lg" />
           </CHeaderToggler>
           <CHeaderBrand className="mx-auto" to="/">
-          <h2 style={{color:'white'}}>{name}</h2>
+          {/* <h2 style={{color:'white'}}>{name}</h2> */}
           </CHeaderBrand>
           <CHeaderNav >
             {role === 'client' ?( 

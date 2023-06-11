@@ -8,34 +8,18 @@ import {
   CModalFooter,
   CModalHeader,
   CModalTitle,
-} from '@coreui/react'
-import {
   CButton,
   CCard,
   CCardBody,
-  CCardFooter,
-  CCardGroup,
   CCardHeader,
-  CCardImage,
-  CCardLink,
-  CCardSubtitle,
-  CCardText,
-  CCardTitle,
-  CListGroup,
-  CListGroupItem,
-  CNav,
-  CNavItem,
-  CFormFeedback,
   CCol,
   CRow,
   CTable,
   CTableBody,
-  CFormLabel,
   CTableDataCell,
   CTableHead,
   CTableHeaderCell,
   CTableRow,
-  CFormText,
   CFormInput,
 } from '@coreui/react'
 import Swal from 'sweetalert2'
@@ -50,10 +34,7 @@ import QrScanner from 'react-qr-scanner';
 const socket = io.connect("http://localhost:5001");
 
 const POST_COMMANDE_URL = "/commande/post"
-const POST_LIGNECOMMANDE_URL = "/ligneCommande/post"
 const GET_PRODUCT_URL = '/product/get/'
-const UPDATE_CUSTOM_SOLD_URL = '/client/updateSold/'
-const UPDATE_PRODUCT_QUANTITY_URL = '/materialproduct/editQuantity/' 
 const GET_CUSTOM_URL = '/user/get/'
 
 
@@ -149,7 +130,7 @@ const Cart = () => {
       timer: 3000,
       timerProgressBar: true,
     });
-    if(numtable === ""){
+    if(numtable == ""){
       Toast.fire({
         icon: 'error',
         title: 'Pleace check your table',
@@ -158,7 +139,6 @@ const Cart = () => {
       axiosApi.getBYID(GET_CUSTOM_URL, idClient).then( (res) => {
         const sold = res.solde
         if (sold >= prixTotal) {
-          console.log(products)
           axiosApi.post(POST_COMMANDE_URL, { prixTotal, idClient, idService, numtable , lignesCommandes : products})
             .then((res) => {
               socket.emit("add_Order");

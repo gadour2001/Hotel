@@ -8,7 +8,6 @@ import {
     CRow,
     CTable,
     CTableBody,
-    CTableCaption,
     CTableDataCell,
     CTableHead,
     CTableHeaderCell,
@@ -70,7 +69,7 @@ const Reservation = () => {
             <CCard className="mb-4">
                 <CCardHeader>
                 <div className='row'>
-                    <h2 className="col-6" >Reservation</h2>
+                    <h2 className="col-6" >Reservations</h2>
                 </div>
                 </CCardHeader>
                 <CCardBody>

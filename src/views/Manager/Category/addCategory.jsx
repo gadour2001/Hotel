@@ -8,15 +8,12 @@ import {
     CCardHeader,
     CCol,
     CForm,
-    CFormCheck,
     CFormInput,
     CFormFeedback,
     CFormLabel,
     CFormSelect,
     CFormTextarea,
     CInputGroup,
-    CInputGroupText,
-    CRow,
   } from '@coreui/react'
 import { useNavigate, useParams } from 'react-router-dom'
 

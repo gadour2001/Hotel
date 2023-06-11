@@ -1,15 +1,11 @@
 import React, { useState , useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import {
-  CAvatar,
   CButton,
-  CButtonGroup,
   CCard,
   CCardBody,
-  CCardFooter,
   CCardHeader,
   CCol,
-  CProgress,
   CRow,
   CTable,
   CTableBody,
@@ -18,47 +14,19 @@ import {
   CTableHeaderCell,
   CTableRow,
   CBadge,
-  CWidgetStatsC,
 } from '@coreui/react'
-import { CChartLine } from '@coreui/react-chartjs'
-import { getStyle, hexToRgba } from '@coreui/utils'
-import CIcon from '@coreui/icons-react'
-import {
-  cibCcAmex,
-  cibCcApplePay,
-  cibCcMastercard,
-  cibCcPaypal,
-  cibCcStripe,
-  cibCcVisa,
-  cibGoogle,
-  cibFacebook,
-  cibLinkedin,
-  cifBr,
-  cifEs,
-  cifFr,
-  cifIn,
-  cifPl,
-  cifUs,
-  cibTwitter,
-  cilCloudDownload,
-  cilPeople,
-  cilUser,
-  cilUserFemale,
-  cilChartPie,
-  cilSpeedometer,
-  cilBasket,
-  cilUserFollow,
-} from '@coreui/icons'
-import WidgetsDropdown from '../../widgets/WidgetsDropdown'
 import * as axiosApi from 'src/api/axiosApi' 
+import Swal from 'sweetalert2'
 import io from "socket.io-client"; 
 
 const socket = io.connect("http://localhost:5001");
 
 const GET_ORDER_URL = '/commande/get/Service/'
 const UPDATE_COMMANDE_STATUS = '/commande/update/status/'
-
+const GET_PRODUCT_URL = '/materialProduct/getProducts/'
 const GET_RESERVATION_URL = '/reservation/get/Service/'
+const UPDATE_PRODUCT_URL = '/materialproduct/editQuantity/' 
+
 
 
 
@@ -66,12 +34,22 @@ const DashboardServiceManager = () => {
     const [orders, setOrders] = useState([])
     const [date , setDate] = useState(new Date().toISOString().split('T')[0])
     const [reservations, setReservations] = useState([])
+    const [products, setProducts] = useState([])
     const idService = localStorage.getItem('user')?JSON.parse(localStorage.getItem('user')).user.payload.user.idService:null
 
     const get_Order = (id) => {
         axiosApi.getBYID(GET_ORDER_URL , id)
-        .then((res) => setOrders(res))
+        .then((res) => {
+          setOrders(res) 
+          get_Product(idService)
+        })
         .catch((err) => console.log(err))
+    }
+
+    const get_Product = (id) => {
+      axiosApi.getBYID(GET_PRODUCT_URL , id)
+      .then((res) => {setProducts(res)})
+      .catch((err) => console.log(err))
     }
 
     const handleUpdateStatus  = (id,Status) => {
@@ -117,6 +95,25 @@ const DashboardServiceManager = () => {
         get_Reservation(idService)
       });
     }, [socket]);
+
+    const handleStock = async (idP , idC) => {  
+      const { value: quantity } = await Swal.fire({
+        title: 'Input Quantity ',
+        input: 'number',
+        inputLabel: 'New Quantity',
+        inputPlaceholder: 'Enter New Quantity'
+      })
+      
+      if (quantity > 0) {
+        Swal.fire({
+          title:`Entered Quantity : ${quantity} `,
+          icon: 'success',
+        })
+        axiosApi.put(UPDATE_PRODUCT_URL , idP , {quantity:quantity})
+        .then((res) => get_Product(idService))
+        .catch((err) => console.log(err))
+      }
+    }
   return (
     <>
       <CRow>
@@ -205,6 +202,26 @@ const DashboardServiceManager = () => {
               </CCardBody>
             </CCard>
           ) :("")}
+          {products.length > 0 ? ( 
+          <CTable>
+            <CTableHead>
+              <CTableRow>
+                <CTableHeaderCell scope="col">Name</CTableHeaderCell>
+                <CTableHeaderCell scope="col">Quantity</CTableHeaderCell>
+                <CTableHeaderCell scope="col">Action</CTableHeaderCell> 
+              </CTableRow>
+            </CTableHead>
+            <CTableBody>
+              {products.map((product) => 
+              <CTableRow key={product._id} className={ product.quantity === 0 ? "table-danger" : "table-info"}>
+                <CTableDataCell>{product.name}</CTableDataCell>
+                <CTableDataCell>{product.quantity}</CTableDataCell>
+                <CTableDataCell><CButton color="success" onClick={() => handleStock(product._id)}>Add Quantity</CButton></CTableDataCell>
+              </CTableRow>
+              )}
+            </CTableBody>
+          </CTable>
+          ) : ("")}
         </CCol>
       </CRow>
     </>

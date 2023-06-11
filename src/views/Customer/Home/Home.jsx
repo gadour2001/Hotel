@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react"
+import React, { useEffect, useState } from "react"
 // Import Swiper React components
 import { Swiper, SwiperSlide } from "swiper/react"
 
@@ -12,19 +12,18 @@ import "src/assets/css/homeCustom.css"
 import SwiperCore, { Autoplay } from 'swiper'
 
 // import required modules
-import { Navigation, Pagination, Mousewheel, Keyboard } from "swiper"
-import { Link, useNavigate } from "react-router-dom"
+import { Navigation, Pagination } from "swiper"
+import { useNavigate } from "react-router-dom"
 
 const GET_SERVICE_URL = '/service/adminActive/'
+const GET_HOTELNAME_URL = '/admin/getHotelName/'
 
 const Home = () => {
-  // console.log(new Date(Date.now()).toISOString());
-  // const timezone = 1 
-  // const now = Date.now() + (60*60*1000)
-  // console.log(new Date(now).toISOString())
   const navigate = useNavigate()
   SwiperCore.use([Autoplay])
   const [services , setServices] = useState([])
+  const [name , setName ] = useState('')
+
 
 
   const Client = localStorage.getItem("user")?JSON.parse(localStorage.getItem("user")).user.payload.user:null
@@ -35,14 +34,20 @@ const Home = () => {
           navigate('/login/0')
         }else{
           axiosApi.getBYID(GET_SERVICE_URL,'646fa87a03f4be6cf5fd824c')
-          .then((res) => setServices(res))
-          .catch((err) => console.log(err))
+          .then((res) => {
+            setServices(res)
+            axiosApi.getBYID(GET_HOTELNAME_URL , Client._id).then((res) => {
+              setName(res)
+            }).catch((err) => console.log(err))
+          }).catch((err) => console.log(err))
         }
       }
     },[])
   return (
     <div className="html">
-      {/* <i><span className="span">Our website</span> offers a seamless and immersive experience, bringing the exceptional hospitality of our hotel directly to you. Explore our range of exquisite accommodations, indulge in world-class dining experiences, and discover a host of personalized services tailored to your needs</i> */}
+      <div className="description">
+        <p className="titre">Welcome to <span className="name">{name}</span></p><p className="content">Your premier destination for luxury accommodation and exceptional service. At {name}, we offer a wide range of services designed to enhance your stay and provide a memorable experience.</p>
+      </div>
       <div className="body">
         <div className="App">
             <Swiper style={ {

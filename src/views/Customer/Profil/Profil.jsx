@@ -7,24 +7,15 @@ import {
     CCardHeader,
     CCol,
     CForm,
-    CFormCheck,
     CFormInput,
     CFormFeedback,
     CFormLabel,
-    CFormSelect,
-    CFormTextarea,
-    CInputGroup,
-    CInputGroupText,
     CRow,
-    CNav, 
-    CNavItem,
-    CNavLink, 
     CModal,
     CModalBody,
     CModalFooter,
     CModalHeader,
     CModalTitle,
-    CFormText,
 } from '@coreui/react'
 import Swal from 'sweetalert2'
 import { useNavigate } from 'react-router-dom'
@@ -122,10 +113,12 @@ const Profil = () => {
         <CCol xs={12} >
           <CCard className="mb-4"  style={{textAlign: 'initial'}}>
             <CCardHeader>
-                <strong>Profil</strong>
-                <div className="d-grid gap-2 d-md-flex justify-content-md-end">
-                  <h5 className='col-xl-4 col-xs-12'>Balance : {sold} DT</h5>
+              <div className='row'>
+                <h3 className="col-6" >Profil</h3>
+                <div className="col-6 "style={{textAlign:'end'}}>
+                  <h5>Balance : {sold} DT</h5>
                 </div>
+              </div>
             </CCardHeader>
             <CCardBody>
               <CForm

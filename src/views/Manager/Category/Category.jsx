@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import Swal from 'sweetalert2'
-//swalWithBootstrapButtons
 import {
     CButton,
     CCard,
@@ -55,7 +54,7 @@ const Category = () => {
           .then(() => {
             swalWithBootstrapButtons.fire(
               'Deleted!',
-              'Your file has been deleted.',
+              'Your category has been deleted.',
               'success'
             )
             setCategorys(categorys.filter((category) => category._id !== id))
@@ -63,7 +62,7 @@ const Category = () => {
           .catch((err) => {
             swalWithBootstrapButtons.fire(
               'Cancelled',
-              'Your imaginary file is safe :)',
+              'Your category file is safe :)',
               'error'
             )
             console.log(err)
@@ -71,7 +70,7 @@ const Category = () => {
         } else if (result.dismiss === Swal.DismissReason.cancel) {
           swalWithBootstrapButtons.fire(
             'Cancelled',
-            'Your imaginary file is safe :)',
+            'Your imaginary category is safe :)',
             'error'
           )
         }
@@ -103,7 +102,7 @@ const Category = () => {
                     <CTableRow>
                       <CTableHeaderCell scope="col">Image</CTableHeaderCell>
                       <CTableHeaderCell scope="col">Name</CTableHeaderCell>
-                      <CTableHeaderCell scope="col">Type</CTableHeaderCell>
+                      <CTableHeaderCell scope="col">Type of Category</CTableHeaderCell>
                       <CTableHeaderCell scope="col">Update</CTableHeaderCell>
                       <CTableHeaderCell scope="col">Delete</CTableHeaderCell>
                     </CTableRow>
@@ -113,11 +112,11 @@ const Category = () => {
                     <CTableRow key={category._id}>
                       <CTableDataCell><img style={{height:60+'px'}} src={category.image} alt={category.name} /></CTableDataCell>
                       <CTableDataCell>{category.name}</CTableDataCell>
-                      <CTableDataCell>{category.type}</CTableDataCell>
+                      <CTableDataCell>{category.type === 'material' ? "Consumable" : "Service"}</CTableDataCell>
                       <CTableDataCell><Link to={`/category/addCategory/${category._id}`}><CButton color="warning">Update</CButton></Link></CTableDataCell>
                       <CTableDataCell><CButton color="danger" onClick={() => handleDelete(category._id)}>Delete</CButton></CTableDataCell>
                     </CTableRow>
-                    ): <CTableRow><CTableDataCell colSpan={4} style={{textAlign:'center'}}>Data Not Found</CTableDataCell></CTableRow>}
+                    ): <CTableRow><CTableDataCell colSpan={5} style={{textAlign:'center'}}>Data Not Found</CTableDataCell></CTableRow>}
                   </CTableBody>
                 </CTable>
             </CCardBody>

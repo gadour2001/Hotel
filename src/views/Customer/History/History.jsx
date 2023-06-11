@@ -1,5 +1,4 @@
 import React , { useEffect, useState } from 'react'
-import Swal from 'sweetalert2'
 import {
     CButton,
     CCard,
@@ -9,7 +8,6 @@ import {
     CRow,
     CTable,
     CTableBody,
-    CTableCaption,
     CTableDataCell,
     CTableHead,
     CTableHeaderCell,
@@ -42,13 +40,13 @@ const History = () => {
     const Client = localStorage.getItem("user")?JSON.parse(localStorage.getItem("user")).user.payload.user:null
     useEffect(() => {
       if(localStorage.getItem('user')){
-        // if(Client.isActive == false)
-        // {
-        //   navigate('/wait')
-        // }else{
+        if(Client.isActive == false)
+        {
+          navigate('/wait')
+        }else{
           get_Order_By_Client(idCustom)
         } 
-      // }
+      }
     },[idCustom])
 
     const handleUpdate = (id) => {
@@ -70,7 +68,9 @@ const History = () => {
         <CCol xs={12}>
           <CCard className="mb-4">
             <CCardHeader>
-                <strong>Orders</strong>
+            <div className='row'>
+                    <h2 className="col-6" >Orders</h2>
+                </div>
             </CCardHeader>
             <CCardBody>
                 <CTable>

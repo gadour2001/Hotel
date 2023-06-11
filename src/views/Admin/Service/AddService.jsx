@@ -6,15 +6,10 @@ import {
     CCardHeader,
     CCol,
     CForm,
-    CFormCheck,
     CFormInput,
     CFormFeedback,
     CFormLabel,
-    CFormSelect,
-    CFormTextarea,
-    CInputGroup,
-    CInputGroupText,
-    CRow,
+    CInputGroup
   } from '@coreui/react'
 import * as axiosApi from 'src/api/axiosApi'
 import { useNavigate, useParams } from 'react-router-dom'

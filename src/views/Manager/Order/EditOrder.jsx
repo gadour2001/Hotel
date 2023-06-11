@@ -9,7 +9,6 @@ import {
     CRow,
     CTable,
     CTableBody,
-    CTableCaption,
     CTableDataCell,
     CTableHead,
     CTableHeaderCell,
@@ -18,7 +17,7 @@ import {
     CTableFoot,
   } from '@coreui/react'
 import * as axiosApi from '../../../api/axiosApi'
-import { Link, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 
 const GET_LIGNECOMMAND_URL = '/ligneCommande/get/'
 const DELETE_LIGNECOMMAND_URL = '/ligneCommande/delete/'

@@ -10,7 +10,6 @@ import {
     CRow,
     CTable,
     CTableBody,
-    CTableCaption,
     CTableDataCell,
     CTableHead,
     CTableHeaderCell,
@@ -30,7 +29,6 @@ const Manager = () => {
     const [managers , setManagers] = useState([])
 
     const idAdmin = localStorage.getItem('user')?JSON.parse(localStorage.getItem('user')).user.payload.user._id:null
-    // const [service_name , setService_name] = useState('')
 
     const get_Manager = (id) => {
         axiosApi.getBYID(GET_MANAGERS_URL , id)
@@ -45,11 +43,6 @@ const Manager = () => {
       },
       buttonsStyling: false
     })
-    // const get_Service = (id) => {
-    //   axiosApi.getBYID(GET_SERVICE_URL,id)
-    //       .then((res) => setService_name(res.name))
-    //       .catch((err) => console.log(err))
-    // }
     const handleDelete = async (id) => {
       swalWithBootstrapButtons.fire({
         title: 'Are you sure?',
@@ -69,10 +62,7 @@ const Manager = () => {
           axiosApi.del(DELETE_MANAGER_URL, id)
           .then(() => setManagers(managers.filter((manager) => manager._id !== id)))
           .catch((err) => console.log(err))
-        } else if (
-          /* Read more about handling dismissals below */
-          result.dismiss === Swal.DismissReason.cancel
-        ) {
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
           swalWithBootstrapButtons.fire(
             'Cancelled',
             'Your imaginary file is safe :)',

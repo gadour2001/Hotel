@@ -1,28 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import {
-  CButton,
   CCard,
   CCardBody,
-  CCardFooter,
-  CCardGroup,
   CCardHeader,
-  CCardImage,
-  CCardLink,
-  CCardSubtitle,
-  CCardText,
-  CCardTitle,
-  CListGroup,
-  CListGroupItem,
-  CNav,
-  CNavItem,
-  CNavLink,
   CCol,
   CRow,
 } from '@coreui/react'
-import { DocsExample } from 'src/components'
-
-import ReactImg from 'src/assets/images/react.jpg'
 import CardService from 'src/components/Card/CardService'
 import * as axiosApi from 'src/api/axiosApi'
 
@@ -47,12 +31,11 @@ const ServiceCustomer = () => {
   const Client = localStorage.getItem("user")?JSON.parse(localStorage.getItem("user")).user.payload.user:null
   useEffect(() => {
     if(localStorage.getItem('user')){
-      // if(Client.isActive == false)
-      //   {
-      //     navigate('/wait')
-      //   }else{
-          getServices(idResponsable)
-        // }
+      if(Client.isActive == false){
+        navigate('/wait')
+      }else{
+        getServices(idResponsable)
+      }
     }
   },[])
 
@@ -61,14 +44,15 @@ const ServiceCustomer = () => {
       <CRow>
         <CCol xs>
           <CCard className="mb-12">
-            <CCardHeader>
-             <h2 className='text-center'> <strong>Our Services</strong></h2>
+            <CCardHeader className='text-center'>
+             <h2 style={{margin : '40px 0px' , fontWeight:'bold'}} > Our Services</h2>
+             <p style={{fontSize:"20px" , fontFamily:''}}>In our Hotel , we pride ourselves on providing a range of exceptional services to enhance your stay and cater to your every need. Discover the unparalleled services we offer</p>
             </CCardHeader>
             <CCardBody>
               <CRow xs={{ cols: 1, gutter: 4 }} xl={{ cols: 3 }} md={{ cols: 1 }}>
                 {services.length > 0 ? services.map((service) => (
                   <CCol xs  key={service._id}><Link to={`/serviceCustomer/productCustomer/${service._id}`}>
-                    <CardService name={service.name} description={service.description} image={service.image}/>
+                    <CardService name={service.name} image={service.image}/>
                   </Link></CCol>
                 )) : <CCol>Data Not found</CCol>}
               </CRow>

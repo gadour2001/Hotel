@@ -10,13 +10,11 @@ import {
   CRow,
   CTable,
   CTableBody,
-  CTableCaption,
   CTableDataCell,
   CTableHead,
   CTableHeaderCell,
   CTableRow, 
 } from '@coreui/react'
-import { DocsExample } from 'src/components'
 import * as axiosApi  from 'src/api/axiosApi'
 import CIcon from '@coreui/icons-react'
 import { cilPlaylistAdd } from '@coreui/icons'
@@ -104,9 +102,10 @@ const Service = () => {
             <CCardHeader>
               <div className='row'>
                 <h2 className="col-6" >Service</h2>
-              <div className="col-6 "style={{textAlign:'end'}}>
-                <Link to='/service/addService/0'><CButton color="info"><CIcon icon={cilPlaylistAdd} className="me-2" />Add Service</CButton></Link>
-              </div></div>
+                <div className="col-6 "style={{textAlign:'end'}}>
+                  <Link to='/service/addService/0'><CButton color="info"><CIcon icon={cilPlaylistAdd} className="me-2" />Add Service</CButton></Link>
+                </div>
+              </div>
             </CCardHeader>
             <CCardBody>
                 <CTable>

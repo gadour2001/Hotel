@@ -8,7 +8,6 @@ import {
   CRow,
   CTable,
   CTableBody,
-  CTableCaption,
   CTableDataCell,
   CTableHead,
   CTableHeaderCell,
@@ -23,8 +22,6 @@ import {
   CWidgetStatsC
   
 } from '@coreui/react'
-import WidgetsDropdown from '../../widgets/WidgetsDropdown'
-import Swal from 'sweetalert2'
 import * as axiosApi from 'src/api/axiosApi'
 import io from "socket.io-client";
 import CIcon from '@coreui/icons-react'

@@ -24,12 +24,9 @@ import PropTypes from 'prop-types'
 
 const CardService = (props) => {
   return (
-    <CCard>
+    <CCard style={{borderRadius : '15px'}}>
         <h2 style={{color:'black',position:"absolute",bottom:"45%",width:'100%',background:"#ffffff95",textAlign:'center'}}>{props.name}</h2>
-        <img orientation="top" src={props.image} alt={props.name} className='img' style={{height:'300px'}}/>
-        <CCardBody>
-          <CCardText>{props.description}</CCardText>
-        </CCardBody>
+        <img orientation="top" src={props.image} alt={props.name} className='img' style={{height:'300px' ,borderRadius : '15px'}}/>
     </CCard>
   );
 };
@@ -37,7 +34,6 @@ const CardService = (props) => {
 CardService.propTypes = {
   image: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
-  description: PropTypes.string.isRequired,
 };
 
 export default CardService

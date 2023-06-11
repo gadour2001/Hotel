@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Link, useNavigate , useParams } from 'react-router-dom'
 import Swal from 'sweetalert2'
+
 import {
   CButton,
   CCard,
@@ -20,8 +21,9 @@ import {
   CModalTitle,
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
-import { cilLockLocked, cilUser } from '@coreui/icons'
+import { cilLockLocked, cilUser , cilQrCode } from '@coreui/icons'
 import * as axiosApi  from 'src/api/axiosApi'
+import QrScanner from 'react-qr-scanner';
 import io from "socket.io-client";
 
 const socket = io.connect("http://localhost:5001");
@@ -43,9 +45,28 @@ const Login = () => {
   const [visible, setVisible] = useState(false)
   const [email,setEmail] = useState('')
   const [password,setPassword] = useState('')
-
   const [loading , setLoading] = useState(false)
   const [message , setMessage] = useState('')
+  const [visibleQrCode , setVisibleQrCode] = useState(false)
+
+
+  const handleScan = (result) => {
+    if (result) {
+      setVisibleQrCode(false)
+      navigate(`/login/${result.text}`)
+      Swal.fire({
+        position: 'center',
+        icon: 'success',
+        title: `Your are in the table N° ${result.text}`,
+        showConfirmButton: false,
+        timer: 1500
+      })
+    }
+  };
+  
+  const handleError = (error) => {
+    console.error('QR code scan error:', error);
+  };
 
   const handleLogin = (e) => {
     e.preventDefault()
@@ -113,19 +134,19 @@ const Login = () => {
   
   
   useEffect(()=>{
-    // axiosApi.get(GET_ALL_CLIENTS_URL)
-    //   .then((res) => {
-    //     for (let i = 0; i < res.length; i++) {
-    //       let date=new Date(res[i].dateEntre)
-    //       date.setDate(date.getDate()+res[i].nbrJour)
-    //       if (date<=(Date.now()+(60*60*1000)) && res[i].isActive) {
-    //         axiosApi.put(UPDATE_CUSTOM_STATUS_URL , res[i]._id , {isActive: false})
-    //         .then(() => { console.log('Custom status updated successfully.')
-    //         }).catch((error) => console.error('Error updating service status:', error))
+    axiosApi.get(GET_ALL_CLIENTS_URL)
+      .then((res) => {
+        for (let i = 0; i < res.length; i++) {
+          let date=new Date(res[i].dateEntre)
+          date.setDate(date.getDate()+res[i].nbrJour)
+          if (date<=(Date.now()+(60*60*1000)) && res[i].isActive) {
+            axiosApi.put(UPDATE_CUSTOM_STATUS_URL , res[i]._id , {isActive: false})
+            .then(() => { console.log('Custom status updated successfully.')
+            }).catch((error) => console.error('Error updating service status:', error))
             
-    //       }
-    //     }
-    //   }).catch((err) => console.log(err))
+          }
+        }
+      }).catch((err) => console.log(err))
     if(user){
       switch (user.role) {
         case 'client':
@@ -165,7 +186,12 @@ const Login = () => {
               <CCard className="p-4">
                 <CCardBody>
                   <CForm onSubmit={handleLogin}>
-                    <h1>Login</h1>
+                    <div style={{display:'flex' , justifyContent: 'space-between'}}>
+                      <h1>Login</h1>
+                      <CButton color="success" onClick={() => {setVisibleQrCode(true)}} style={{height:'40px'}}> 
+                        <CIcon icon={cilQrCode} className="me-2" />Scan QR Code
+                      </CButton>
+                    </div>
                     <p className="text-medium-emphasis">Sign In to your account</p>
                     {message !== '' ? (
                         <div className="form-group mt-2">
@@ -257,7 +283,22 @@ const Login = () => {
             </CButton>
             <CButton color="primary" type='submit' onClick={(e) => ForgotPassword(e)} >Confirm</CButton>
           </CModalFooter>
-        </CModal>
+      </CModal>
+      <CModal scrollable visible={visibleQrCode} onClose={() => setVisibleQrCode(false)}>
+          <CModalBody >
+            <QrScanner
+              onScan={handleScan}
+              onError={handleError}
+              facingmode="environment"
+              style={{width:'100%'}}
+            />                 
+          </CModalBody>
+          <CModalFooter>
+            <CButton color="secondary" onClick={() => setVisibleQrCode(false)}>
+              Close
+            </CButton>
+          </CModalFooter>
+      </CModal>
     </div>
   )
 }

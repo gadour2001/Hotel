@@ -17,15 +17,13 @@ const PageVide = () => {
   }, [socket])
   
   return (
-    <>
-    <div className="row d-flex justify-content-center " style={{height: 100+'vh',width: 100+'%',alignItems: 'center'}}>
-      <div className="spinner-border" style={{width: 10 + 'rem',height:10+'rem'}} role="status">
-        <span className="visually-hidden">Loading...</span>
+    <div style={{ backgroundColor: 'black', display: 'flex', flexDirection: 'column', alignItems: 'center' , height:'100vh' }}>
+      <img src='/logo.png' alt='logo' style={{ width: '300px', height: '150px' ,marginTop:'10%' }} />
+      <div className="spinner-border" style={{ width: '10rem', height: '10rem', color: 'white', margin:'7% ' }} role="status"></div>
+      <div style={{ color: 'white' }}>
+        <h1>Please Wait Until Validation...</h1>
       </div>
-        <div className='row text-center' style={{marginTop: -30+'rem'}}><h1>Please Wait Until Validation</h1></div>
     </div>
-     
-    </>
   )
 }
 

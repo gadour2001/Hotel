@@ -3,7 +3,6 @@ import { useNavigate, useParams } from 'react-router-dom'
 import * as axiosApi  from 'src/api/axiosApi'
 import {
     CCol,
-    CFormLabel,
     CFormSelect,
 } from '@coreui/react'
 import io from "socket.io-client"; 
@@ -31,7 +30,10 @@ const ItemPage = () => {
 
     const get_Product = (id) => {
         axiosApi.getBYID(GET_PRODUCT_URL, id )
-        .then((res) =>{setProduct(res)})
+        .then((res) =>{
+          setProduct(res)
+          get_Seance(idProduct)
+        })
         .catch((err) => console.log(err))
     }
 
@@ -43,8 +45,6 @@ const ItemPage = () => {
 
     useEffect(() => {
       if (localStorage.getItem('user')) {
-        get_Seance(idProduct)
-        get_Seance(idProduct)
         get_Product(idProduct)
       }
     }, [])
@@ -110,7 +110,7 @@ const ItemPage = () => {
       <div className='col-xl-6 col-sm-12'>
       <h1>{product.name}</h1>
       <h6>{product.description}</h6>
-      <br></br><h5>Price for the {product.name} session for 1 hours is {product.prix} DT</h5><br></br>
+      <br></br><h5>Price for the {product.name} session for {product.duree} hours is {product.prix} DT</h5><br></br>
       <h5>Arrival</h5>
       <input
         type="date"

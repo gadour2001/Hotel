@@ -1,12 +1,11 @@
 import React from 'react'
-import WidgetsDropdown from '../../widgets/WidgetsDropdown'
 import {
   CChartBar,
   CChartPie,
 } from '@coreui/react-chartjs'
 import { CCard, CCardBody, CCardHeader, CCol, CRow, CWidgetStatsC } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
-import { cilBasket, cilChartPie, cilPeople, cilSpeech, cilSpeedometer, cilUserFollow } from '@coreui/icons'
+import { cilBasket, cilChartPie, cilSpeedometer, cilUserFollow } from '@coreui/icons'
 
 const DashboardAdmin = () => {
   return (

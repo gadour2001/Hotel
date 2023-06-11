@@ -33,7 +33,7 @@ const GET_CATEGORY_URL = '/category/get/'
 const GET_PRODUCT_URL = '/product/get/'
 
 const ADD_SERVICE_PRODUCT_URL = '/serviceProduct/post'
-const UPDATE_SERVICE_PRODUCT_URL = '/'
+const UPDATE_SERVICE_PRODUCT_URL = '/serviceProduct/put/'
 
 
 const AddProduct = () => {
@@ -44,21 +44,22 @@ const AddProduct = () => {
   const { idCategory } = useParams()
 
   const [product_name , setProduct_name] = useState('')
-  const [product_prix , setProduct_prix] = useState(0)
+  const [product_prix , setProduct_prix] = useState('')
   const [product_description , setProduct_description] = useState('')
   const [product_idCategory , setProduct_idCategory] = useState(idCategory)
-  const [product_quantity , setProduct_quantity] = useState(0)
+  const [product_quantity , setProduct_quantity] = useState('')
   const [product__t , setProduct__t] = useState('')
-  const [product_duration , setProduct_duration] = useState(0)
-  const [product_nbrPlaces , setProduct_nbrPlaces] = useState(0)
+  const [product_duration , setProduct_duration] = useState('')
+  const [product_nbrPlaces , setProduct_nbrPlaces] = useState('')
 
 
-  const [categorys , setCategorys] = useState([])
-  const [category_name , setCategory_name] = useState('')
+  const [categorysService , setCategorysService] = useState([])
+  const [categorysMaterial , setCategorysMaterial] = useState([])
+  const [category , setCategory] = useState({})
 
 
   const idService = localStorage.getItem('user')?JSON.parse(localStorage.getItem('user')).user.payload.user.idService:null
-  const [activeForm, setActiveForm] = useState('material')
+  const [activeForm, setActiveForm] = useState('')
 
   const [base64Image, setBase64Image] = useState('')
 
@@ -74,14 +75,18 @@ const AddProduct = () => {
   }
 
   const get_Categorys = (id) => {
-    axiosApi.getBYID(GET_CATEGORYS_BY_SERVICE_URL,id)   
-    .then((res) => setCategorys(res))
-    .catch((err) => console.log(err))
+    axiosApi.getBYID(GET_CATEGORYS_BY_SERVICE_URL, id)
+      .then((res) => {
+        setCategorysService(res.filter(category => category.type !== "material"))
+        setCategorysMaterial(res.filter(category => category.type === "material"))
+      })
+      .catch((err) => console.log(err))
   }
   const get_Category_Name = (id) => {
     axiosApi.getBYID(GET_CATEGORY_URL , id)
     .then((res) => {
-      setCategory_name(res.name)
+      idProduct == '0' ? (idCategory == '0' ? setActiveForm('material') : (res.type == "material" ? setActiveForm('material') : setActiveForm('service'))) : (res.type == 'material' ? setActiveForm('material') : setActiveForm('service'))
+      setCategory(res)
     })
     .catch((err) => console.log(err))
   }
@@ -147,18 +152,6 @@ const AddProduct = () => {
     }
     setValidated(true)
   }
-  const get_MaterialProduct = (id) => {
-    axiosApi.getBYID(GET_PRODUCT_URL , id)
-    .then((res) => {
-      setProduct_name(res.name)
-      setProduct_description(res.description)
-      setProduct_prix(res.prix)
-      setBase64Image(res.image)
-      setProduct_idCategory(res.idCategorie)
-      setProduct_quantity(res.quantity)
-    })
-    .catch((err) => console.log(err))
-  }
 
   const renderForm1 = () => (
     <CForm
@@ -200,8 +193,7 @@ const AddProduct = () => {
           <CFormLabel htmlFor="validationCustom04">Image</CFormLabel>
           <CFormInput 
             type="file" 
-            id="validationCustom04" 
-            defaultValue={base64Image}
+            id="validationCustom04"
             onChange={(e) => handleImageChange(e)}
           />
           <CFormFeedback invalid>Please choose a Image.</CFormFeedback>
@@ -220,7 +212,7 @@ const AddProduct = () => {
             <CFormInput 
             type="number" 
             id="validationCustom05" 
-            defaultValue={product_quantity}
+            value={product_quantity}
             disabled
           />
           )}
@@ -235,16 +227,17 @@ const AddProduct = () => {
             onChange={(e) => setProduct_idCategory(e.target.value)}
           >
               <option>choose a category</option>
-              {categorys?.map((category) => (
+              {categorysMaterial.length > 0 ? (categorysMaterial.map((category) => (
                   <option key={category._id} value={category._id}>{category.name}</option>
-              ))}
+              )
+              )):("")}
           </CFormSelect>
       ) :(
           <CFormSelect 
             aria-label="Default select example" 
             disabled
           >
-              <option>{category_name}</option>
+              <option>{category.name}</option>
           </CFormSelect>
       )}
       </CCol>
@@ -269,15 +262,11 @@ const AddProduct = () => {
     {
       if(idProduct === '0')
       { 
-        console.log(product_name);
-        console.log(product_duration);
-        console.log(product_nbrPlaces);
-        console.log(product_prix);
         event.preventDefault()
         axiosApi.post(ADD_SERVICE_PRODUCT_URL, {
           name:product_name,
           description:product_description,
-          prix:parseFloat(product_prix),
+          prix:parseInt(product_prix),
           image:base64Image,
           idCategory:product_idCategory,
           duree:parseInt(product_duration),
@@ -325,19 +314,6 @@ const AddProduct = () => {
       }
     }
     setValidated(true)
-  }
-  const get_ServiceProduct = (id) => {
-    axiosApi.getBYID(GET_PRODUCT_URL , id)
-    .then((res) => {
-      setProduct_name(res.name)
-      setProduct_description(res.description)
-      setProduct_prix(res.prix)
-      setBase64Image(res.image)
-      setProduct_idCategory(res.idCategorie)
-      setProduct_duration(res.duree)
-      setProduct_nbrPlaces(res.nbPlace)
-    })
-    .catch((err) => console.log(err))
   }
 
   const handleNavClick = (formName) => {
@@ -388,7 +364,6 @@ const AddProduct = () => {
         <CFormInput 
           type="file" 
           id="validationCustom04" 
-          defaultValue={base64Image}
           onChange={(e) => handleImageChange(e)}
         />
         <CFormFeedback invalid>Please choose an Image.</CFormFeedback>
@@ -424,7 +399,7 @@ const AddProduct = () => {
             onChange={(e) => setProduct_idCategory(e.target.value)}
           >
               <option>choose a category</option>
-              {categorys?.map((category) => (
+              {categorysService?.map((category) => (
                   <option key={category._id} value={category._id}>{category.name}</option>
               ))}
           </CFormSelect>
@@ -433,7 +408,7 @@ const AddProduct = () => {
             aria-label="Default select example" 
             disabled
           >
-              <option>{category_name}</option>
+              <option>{category.name}</option>
           </CFormSelect>
       )}
       </CCol>
@@ -446,6 +421,7 @@ const AddProduct = () => {
   );
   useEffect(() => {
     if(localStorage.getItem('user')){
+      setActiveForm('material')
     if(idCategory !== '0')
     {
       get_Category_Name(idCategory)
@@ -453,15 +429,29 @@ const AddProduct = () => {
         axiosApi.getBYID(GET_PRODUCT_URL , idProduct)
         .then((res) => {
           setProduct__t(res.__t)
-          if(res.__t === 'materialProduct')
-            get_MaterialProduct(idProduct)
-          else
-            get_ServiceProduct(idProduct)
+          if(res.__t === 'materialProduct'){
+            setProduct_name(res.name)
+            setProduct_description(res.description)
+            setProduct_prix(res.prix)
+            setBase64Image(res.image)
+            setProduct_idCategory(res.idCategorie)
+            setProduct_quantity(res.quantity)
+          }
+          else{
+            setProduct_name(res.name)
+            setProduct_description(res.description)
+            setProduct_prix(res.prix)
+            setBase64Image(res.image)
+            setProduct_idCategory(res.idCategorie)
+            setProduct_duration(res.duree)
+            setProduct_nbrPlaces(res.nbPlace)
+          }
         })
       }
     }
     else
       get_Categorys(idService)
+    
   }
   },[])
   
@@ -472,24 +462,9 @@ const AddProduct = () => {
             <strong>Product</strong>
           </CCardHeader>
           <CCardBody>
-            <div className="example">
-            {idProduct === '0' ? ( 
-                  <CNav variant="tabs">
-                    <CNavItem>
-                      <CNavLink active={activeForm === 'material'} onClick={() => handleNavClick('material')} >
-                        <CIcon icon={cilMediaPlay} className="me-2" />
-                        Consumable Product
-                      </CNavLink>
-                    </CNavItem>
-                    <CNavItem>
-                      <CNavLink active={activeForm === 'service'} onClick={() => handleNavClick('service')}>
-                        <CIcon icon={cilMediaPlay} className="me-2" />
-                        Service Product
-                      </CNavLink>
-                    </CNavItem>
-                  </CNav>
-                ) : (
-                  product__t === 'materialProduct' ? (
+              <div className="example">
+              {idProduct === '0' ? (
+                idCategory === "0" ? (
                     <CNav variant="tabs">
                       <CNavItem>
                         <CNavLink active={activeForm === 'material'} onClick={() => handleNavClick('material')} >
@@ -498,29 +473,77 @@ const AddProduct = () => {
                         </CNavLink>
                       </CNavItem>
                       <CNavItem>
-                        <CNavLink active={activeForm === 'service'} onClick={() => handleNavClick('service')} disabled>
+                        <CNavLink active={activeForm === 'service'} onClick={() => handleNavClick('service')} >
                           <CIcon icon={cilMediaPlay} className="me-2" />
                           Service Product
                         </CNavLink>
                       </CNavItem>
                     </CNav>
+                    ) : (category.type == 'material' ? (
+                      <CNav variant="tabs">
+                        <CNavItem>
+                          <CNavLink active={activeForm === 'material'} onClick={() => handleNavClick('material')}  >
+                            <CIcon icon={cilMediaPlay} className="me-2" />
+                            Consumable Product
+                          </CNavLink>
+                        </CNavItem>
+                        <CNavItem>
+                          <CNavLink active={activeForm === 'service'} onClick={() => handleNavClick('service')} disabled>
+                            <CIcon icon={cilMediaPlay} className="me-2" />
+                            Service Product
+                          </CNavLink>
+                        </CNavItem>
+                      </CNav>
+                      ) : (
+                        <CNav variant="tabs">
+                          <CNavItem>
+                            <CNavLink active={activeForm === 'material'} onClick={() => handleNavClick('material')}  disabled>
+                              <CIcon icon={cilMediaPlay} className="me-2" />
+                              Consumable Product
+                            </CNavLink>
+                          </CNavItem>
+                          <CNavItem>
+                            <CNavLink active={activeForm === 'service'} onClick={() => handleNavClick('service')} >
+                              <CIcon icon={cilMediaPlay} className="me-2" />
+                              Service Product
+                            </CNavLink>
+                          </CNavItem>
+                        </CNav>
+                      )
+                    )
                   ) : (
-                    <CNav variant="tabs">
-                      <CNavItem>
-                        <CNavLink active={activeForm === 'material'} onClick={() => handleNavClick('material')} disabled>
-                          <CIcon icon={cilMediaPlay} className="me-2" />
-                          Consumable Product
-                        </CNavLink>
-                      </CNavItem>
-                      <CNavItem>
-                        <CNavLink active={activeForm === 'service'} onClick={() => handleNavClick('service')}>
-                          <CIcon icon={cilMediaPlay} className="me-2" />
-                          Service Product
-                        </CNavLink>
-                      </CNavItem>
-                    </CNav>
-                  ))}
-            </div>
+                    product__t === 'materialProduct' ? (
+                      <CNav variant="tabs">
+                        <CNavItem>
+                          <CNavLink active={activeForm === 'material'} onClick={() => handleNavClick('material')} >
+                            <CIcon icon={cilMediaPlay} className="me-2" />
+                            Consumable Product
+                          </CNavLink>
+                        </CNavItem>
+                        <CNavItem>
+                          <CNavLink active={activeForm === 'service'} onClick={() => handleNavClick('service')}disabled>
+                            <CIcon icon={cilMediaPlay} className="me-2" />
+                            Service Product
+                          </CNavLink>
+                        </CNavItem>
+                      </CNav>
+                    ) : (
+                      <CNav variant="tabs">
+                        <CNavItem>
+                          <CNavLink active={activeForm === 'material'} onClick={() => handleNavClick('material')}disabled>
+                            <CIcon icon={cilMediaPlay} className="me-2" />
+                            Consumable Product
+                          </CNavLink>
+                        </CNavItem>
+                        <CNavItem>
+                          <CNavLink active={activeForm === 'service'} onClick={() => handleNavClick('service')}>
+                            <CIcon icon={cilMediaPlay} className="me-2" />
+                            Service Product
+                          </CNavLink>
+                        </CNavItem>
+                      </CNav>
+                    ))}
+              </div>
             {activeForm === 'material' && renderForm1()}
             {activeForm === 'service' && renderForm2()}
           </CCardBody>
